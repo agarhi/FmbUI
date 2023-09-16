@@ -60,7 +60,7 @@ const LandingScreen = ({route}) => {
       {() => {
         console.log("item:", item);
         console.log('You click by View ', menuItem[item.date]);
-        setMenu(item.day);
+        setMenu(menuItem[item.date]);
       }}
          style={{ padding:'4.3%'}}><Text>{item.day}{"\n"}{item.date}</Text></View> 
     );
@@ -85,11 +85,9 @@ const LandingScreen = ({route}) => {
             </View>
           )}
       <View style={styles.daymenu}>
-       <Center>
-        <Text>
-          {menu}
-        </Text>
-        </Center>
+       <Text>{menu.details}</Text>
+       <View style={{flexDirection: 'row'}}><Checkbox /><Text style={{}}> No rice or bread</Text></View>
+       <Text> XS S M L XL</Text>
       </View>
       </View>
     </NativeBaseProvider>
@@ -126,7 +124,8 @@ var styles = StyleSheet.create({
     height:250,
     backgroundColor: 'white',
     margin:5,
-    borderRadius: 5
+    borderRadius: 5,
+    fontSize:40
   },
   backgroundImage: {
     flex: 1,
