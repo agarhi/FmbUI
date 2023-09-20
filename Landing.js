@@ -7,6 +7,8 @@ import Moment from 'moment';
 const LandingScreen = ({route}) => {
   const [data, setData] = useState([]);
   const [days, setDays] = useState([]);
+  const [days1, setDays1] = useState([]);
+  const [days2, setDays2] = useState([]);
   const [jsonData, setJsonData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { pageheader, token } = route.params;
@@ -21,6 +23,7 @@ const LandingScreen = ({route}) => {
 
     const resp = await fetch("http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset=0", requestOptions);
     const data = await resp.json();
+    console.log(data.data);
     for(let i = 0; i < data.data.length; i++) {
 
       const dayDtDt = Moment(data.data[i].date).format('MMM DD');
@@ -30,7 +33,11 @@ const LandingScreen = ({route}) => {
       const dayDtDay = Moment(data.data[i].date).format('ddd');
       const dayDt = '{"day":"'.concat(dayDtDay).concat('","date":"'.concat(dayDtDt).concat('"}'));
       days.push(JSON.parse(dayDt));
-      
+      if(i < 3)
+        days1.push(JSON.parse(dayDt));
+      else 
+      days2.push(JSON.parse(dayDt));
+
     }
     console.log(menuItem);
     setMenuItem(menuItem);
@@ -62,7 +69,7 @@ const LandingScreen = ({route}) => {
         console.log('You click by View ', menuItem[item.date]);
         setMenu(menuItem[item.date]);
       }}
-         style={{ padding:'4.3%'}}><Text>{item.day}{"\n"}{item.date}</Text></View> 
+         style={{ padding:'4.28%'}}><Text>{item.day}{"\n"}{item.date}</Text></View> 
     );
   }
 
@@ -78,7 +85,7 @@ const LandingScreen = ({route}) => {
             <FlatList style={styles.list}
             contentContainerStyle={styles.listContents}
             horizontal={true}
-              data={days}
+              data={days1}
               renderItem={renderItem}
               keyExtractor={(item) => item.date.toString()}
             />
@@ -89,6 +96,15 @@ const LandingScreen = ({route}) => {
        <View style={{flexDirection: 'row'}}><Checkbox /><Text style={{}}> No rice or bread</Text></View>
        <Text> XS S M L XL</Text>
       </View>
+      <View style={styles.container}>
+            <FlatList style={styles.list}
+            contentContainerStyle={styles.listContents}
+            horizontal={true}
+              data={days2}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.date.toString()}
+            />
+            </View>
       </View>
     </NativeBaseProvider>
   );
@@ -143,10 +159,10 @@ var styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
+    elevation: 5
   },
   list: {
-    flexDirection: 'column'
+    flexDirection: 'row'
   },
   listContents: {
     flexDirection: 'row',
