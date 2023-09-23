@@ -217,7 +217,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
     return (
         <View style={{flexDirection:'column', flex:1}}>
              <View style={{flex:2}}>
-                
+                <Image source={require('./images/image-450x180.jpg')} style={styles.backgroundImage}/>
              </View>
              <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:10}}>
                  <View style={{flex:1, marginRight: -1}}>
