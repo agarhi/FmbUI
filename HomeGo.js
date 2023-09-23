@@ -4,6 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { useState, useEffect } from 'react';
 import Checkbox from 'expo-checkbox';
 import Moment from 'moment';
+import DateObject from "react-date-object";
 
 const HomeGo = ({route}) => {
     const [open, setOpen] = useState(false);
@@ -25,6 +26,7 @@ const HomeGo = ({route}) => {
   const [backgroundColor, setBackgroundColor] = useState('#E3E3E3');
   const [mainCourse, setMainCourse] = useState('');
   //const { pageheader, token } = route.params;
+  const [currentMonth, setCurrentMonth] = useState('');
   
   const initialArr = []
 
@@ -39,20 +41,26 @@ const HomeGo = ({route}) => {
     const resp = await fetch("http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset=0", requestOptions);
     const data = await resp.json();
     let detailsData = data.data
+    var dateToday = new DateObject();
+    setCurrentMonth(Moment(dateToday).format('MMM'))
+    var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
+    let currentDayIdx = 0;
+
     for(let i = 0; i < detailsData.length; i++) {
 
       const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
+      if(dayDtDt == dateTodayInFormat) {
+        currentDayIdx = i;
+      }
       menuItem[dayDtDt] = detailsData[i];
 
-      
+      console.log('Date is ', detailsData[i].date)
       const dayDtDay = Moment(detailsData[i].date).format('ddd');
       const dayDt = '{"day":"'.concat(dayDtDay).concat('","date":"'.concat(dayDtDt).concat('"}'));
       days.push(JSON.parse(dayDt));
 
       let topRadius = 0, bottomRadius = 0;
-      if(i == 0) {
-        topRadius = 5
-      }
+      
       if(i == detailsData.length - 1) {
         bottomRadius = 5
       }
@@ -60,6 +68,9 @@ const HomeGo = ({route}) => {
       console.log(initialArrCurr)
       initialArr.push(JSON.parse(initialArrCurr))
     }
+
+    console.log("currentDayIdx ",  currentDayIdx);
+    initialArr[currentDayIdx].color = 'white'; // default day 
     console.log(menuItem);
     console.log(days);
     setMenuItem(menuItem);
@@ -85,9 +96,9 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
 
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
   (
-    <TouchableOpacity style={{backgroundColor:buttonInfo.color,flex:1, padding: 15, borderTopLeftRadius:buttonInfo.topRadius, borderBottomLeftRadius:buttonInfo.bottomRadius}} 
+    <TouchableOpacity style={{backgroundColor:buttonInfo.color,flex:1, padding: 15, borderTopLeftRadius:buttonInfo.topRadius, borderBottomLeftRadius:buttonInfo.bottomRadius,justifyContent:'center'}} 
     onPress={changeColorB2(buttonInfo, index)} key={buttonInfo.id}>
-        <Text>{buttonInfo.text}</Text>
+        <Text style={{fontSize:10}}>{buttonInfo.text}</Text>
     </TouchableOpacity>
   ));
 
@@ -101,6 +112,9 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
              </View>
              <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:10}}>
                  <View style={{flex:1, marginRight: -1}}>
+                 <View style={{backgroundColor:'purple', flex:1, padding: 15, borderTopLeftRadius:5, justifyContent:'center'}}>
+                          <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>{currentMonth}</Text>
+                  </View>
                     {buttonsListArr}
                  </View>
                  <View style={{backgroundColor: 'white', flex:5, borderTopRightRadius:10, borderBottomRightRadius:10}}>
