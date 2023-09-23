@@ -25,140 +25,20 @@ const HomeGo = ({route}) => {
   const [backgroundColor, setBackgroundColor] = useState('#E3E3E3');
   const [mainCourse, setMainCourse] = useState('');
   //const { pageheader, token } = route.params;
-  const detailsArr = [
-    {
-        "date": "2023-09-18",
-        "adults": 0,
-        "kids": 0,
-        "enabled": 1,
-        "details": "Masoor Daal, Chawal",
-        "rsvp": 1,
-        "size": "L",
-        "readonly": 1
-    },
-    {
-        "date": "2023-09-19",
-        "adults": 0,
-        "kids": 0,
-        "enabled": 1,
-        "details": "Chicken Birria Tacos",
-        "rsvp": 1,
-        "size": "L",
-        "readonly": 1
-    },
-    {
-        "date": "2023-09-20",
-        "adults": 0,
-        "kids": 0,
-        "enabled": 1,
-        "details": "Veg Jalfrezi",
-        "rsvp": 1,
-        "size": "L",
-        "readonly": 1
-    },
-    {
-        "date": "2023-09-21",
-        "niyaz": 1,
-        "enabled": 1,
-        "details": "Private Darees And Fateha Jaman",
-        "size": "S",
-        "readonly": 1
-    },
-    {
-        "date": "2023-09-22",
-        "adults": 0,
-        "kids": 0,
-        "enabled": 1,
-        "details": "Homestyle Gosht Tarkari",
-        "rsvp": 1,
-        "size": "L",
-        "readonly": 1
-    },
-    {
-        "date": "2023-09-23",
-        "adults": 3,
-        "kids": 0,
-        "niyaz": 1,
-        "enabled": 1,
-        "details": "Private Darees",
-        "rsvp": 1,
-        "size": "S"
-    },
-    {
-        "date": "2023-09-24",
-        "adults": 3,
-        "kids": 0,
-        "niyaz": 1,
-        "enabled": 1,
-        "details": "Private Darees",
-        "rsvp": 1,
-        "size": "S"
-    }
-  ]
-  const [detailsData, setDetailsData] = useState(detailsArr)
-
+  
   const initialArr = []
-/*    {
-      id: 1,
-      color: "#e3e3e3",
-      text: "Mon, 11",
-      topRadius:5,
-      bottomRadius:0
-    },
-    {
-      id: 2,
-      color: "#e3e3e3",
-      text: "Tue, 12",
-      topRadius:0,
-      bottomRadius:0
-    },
-    {
-      id: 3,
-      color: "#e3e3e3",
-      text: "Wed, 13",
-      topRadius:0,
-      bottomRadius:0
-    },
-    {
-      id: 4,
-      color: "#e3e3e3",
-      text: "Thu, 14",
-      topRadius:0,
-      bottomRadius:0
-    },
-    {
-      id: 5,
-      color: "#e3e3e3",
-      text: "Fri, 15",
-      topRadius:0,
-      bottomRadius:0
-    },
-    {
-      id: 6,
-      color: "#e3e3e3",
-      text: "Sat, 16",
-      topRadius:0,
-      bottomRadius:0
-    },
-    {
-      id: 7,
-      color: "#e3e3e3",
-      text: "Sun, 17",
-      topRadius:0,
-      bottomRadius:5
-    }
-  ];*/
 
   const fetchData = async () => {
+    let token = 'token=17ad665faeb70156112f8e3228da981f; expires=Wed, 22-Nov-2023 02:02:43 GMT; Max-Age=5184000'
     console.log('Fetching data ...')
-    /*const requestOptions = {
+    const requestOptions = {
       method: 'GET',
       headers: {  'Set-Cookie' : token }
     };
 
     const resp = await fetch("http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset=0", requestOptions);
     const data = await resp.json();
-    console.log(data.data);*/
+    let detailsData = data.data
     for(let i = 0; i < detailsData.length; i++) {
 
       const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
