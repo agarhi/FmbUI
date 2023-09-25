@@ -7,6 +7,9 @@ import Moment from 'moment';
 import DateObject from "react-date-object";
 
 const HomeGo = ({route}) => {
+    const token = route.params.token
+    const message = route.params.message
+    console.log("message ", message)
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
@@ -25,13 +28,12 @@ const HomeGo = ({route}) => {
   const [menuItem, setMenuItem] = useState({});
   const [backgroundColor, setBackgroundColor] = useState('#E3E3E3');
   const [mainCourse, setMainCourse] = useState('');
-  //const { pageheader, token } = route.params;
   const [currentMonth, setCurrentMonth] = useState('');
+  const [currMenuObj, setCurrMenuObj] = useState('')
   
   const initialArr = []
 
   const fetchData = async () => {
-    let token = 'token=17ad665faeb70156112f8e3228da981f; expires=Wed, 22-Nov-2023 02:02:43 GMT; Max-Age=5184000'
     console.log('Fetching data ...')
     const requestOptions = {
       method: 'GET',
@@ -71,7 +73,8 @@ const HomeGo = ({route}) => {
 
     console.log("currentDayIdx ",  currentDayIdx);
     initialArr[currentDayIdx].color = 'white'; // default day 
-    console.log(menuItem);
+    setCurrMenuObj(menuItem[initialArr[currentDayIdx].text])
+    console.log("currMenuObj ", currMenuObj);
     console.log(days);
     setMenuItem(menuItem);
     setLoading(false);
@@ -91,6 +94,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
       newArrray[i].color = '#e3e3e3'
     }
     newArrray[index].color = 'white'
+    setCurrMenuObj(menuItem[newArrray[index].text])
     setButtonData(newArrray);
 }
 
@@ -110,6 +114,9 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
              <View style={{flex:2}}>
                 <Image source={require('./images/image-450x180.jpg')} style={styles.backgroundImage}/>
              </View>
+             <View style={{flex:0.5, width:'90%', alignSelf:'center'}}>
+                <Text style={{position:'absolute', bottom:0, right:5, fontWeight:'bold', fontSize: 18}}>{message}</Text>
+             </View>
              <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:10}}>
                  <View style={{flex:1, marginRight: -1}}>
                  <View style={{backgroundColor:'purple', flex:1, padding: 15, borderTopLeftRadius:5, justifyContent:'center'}}>
@@ -119,7 +126,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
                  </View>
                  <View style={{backgroundColor: 'white', flex:5, borderTopRightRadius:10, borderBottomRightRadius:10}}>
                     <View style={{marginTop:20}}>
-                      <Text style={{textAlign:'center', fontWeight: 'bold', fontSize: 18}}>Chicken Stew, Sourdough Bread</Text>
+                      <Text style={{textAlign:'center', fontWeight: 'bold', fontSize: 18}}>{currMenuObj.details}</Text>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', zIndex:1, alignSelf:'center'}}>
                          <Text style={{ fontSize: 18}}>Size / Count   </Text>

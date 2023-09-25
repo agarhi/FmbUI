@@ -8,15 +8,14 @@ import HomeGo  from './HomeGo';
 
 
 const TestLayout = ({route}) => {
-
+  const { token, message } = route.params;
 
 const Tab = createBottomTabNavigator();
 
   return (
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Home" component={HomeGo} initialParams={{token:token, message:message}} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
-        <Tab.Screen name="HomeGo" component={HomeGo} />
       </Tab.Navigator>
     
   );
