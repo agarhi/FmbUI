@@ -13,7 +13,7 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Landing" component={LandingScreen} />
-        <Stack.Screen name="TestLayout" component={TestLayout} />
+        <Stack.Screen name="TestLayout" options={{ title: 'Menu & RSVP' }} component={TestLayout} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -9,15 +9,14 @@ import DateObject from "react-date-object";
 const HomeGo = ({route}) => {
     const token = route.params.token
     const message = route.params.message
-    console.log("message ", message)
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
-    const [items, setItems] = useState([
-    {label: 'X Small', value: 'xs'},
-    {label: 'Small', value: 'small'},
-    {label: 'Medium', value: 'medium'},
-    {label: 'Large', value: 'large'},
-    {label: 'X Large', value: 'xl'}
+    const [foodSizeValue, setFoodSizeValue] = useState(null);
+    const [foodSizeValues, setFoodSizeValues] = useState([
+    {label: 'X Small', value: 'XS'},
+    {label: 'Small', value: 'S'},
+    {label: 'Medium', value: 'M'},
+    {label: 'Large', value: 'L'},
+    {label: 'X Large', value: 'XL'}
   ]);
 
   const [data, setData] = useState([]);
@@ -31,7 +30,7 @@ const HomeGo = ({route}) => {
   const [currentMonth, setCurrentMonth] = useState('');
   const [currMenuObj, setCurrMenuObj] = useState('')
   
-  const initialArr = []
+  const horizTabArr = []
 
   const fetchData = async () => {
     console.log('Fetching data ...')
@@ -47,7 +46,9 @@ const HomeGo = ({route}) => {
     setCurrentMonth(Moment(dateToday).format('MMM'))
     var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
     let currentDayIdx = 0;
+    console.log("detailsData ", detailsData);
 
+    
     for(let i = 0; i < detailsData.length; i++) {
 
       const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
@@ -56,7 +57,6 @@ const HomeGo = ({route}) => {
       }
       menuItem[dayDtDt] = detailsData[i];
 
-      console.log('Date is ', detailsData[i].date)
       const dayDtDay = Moment(detailsData[i].date).format('ddd');
       const dayDt = '{"day":"'.concat(dayDtDay).concat('","date":"'.concat(dayDtDt).concat('"}'));
       days.push(JSON.parse(dayDt));
@@ -68,15 +68,20 @@ const HomeGo = ({route}) => {
       }
       let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
       console.log(initialArrCurr)
-      initialArr.push(JSON.parse(initialArrCurr))
+      horizTabArr.push(JSON.parse(initialArrCurr))
     }
 
-    console.log("currentDayIdx ",  currentDayIdx);
-    initialArr[currentDayIdx].color = 'white'; // default day 
-    setCurrMenuObj(menuItem[initialArr[currentDayIdx].text])
+    console.log("currentDayIdx  ------>",  currentDayIdx);
+    console.log("horizTabArr[currentDayIdx] ------>",  horizTabArr[currentDayIdx]);
+    console.log("horizTabArr[currentDayIdx].text ------>",  horizTabArr[currentDayIdx].text);
+    console.log("menuItem[horizTabArr[currentDayIdx].text ------>",  menuItem[horizTabArr[currentDayIdx].text]);
+
+    horizTabArr[currentDayIdx].color = 'white'; // default day 
+    setCurrMenuObj(menuItem[horizTabArr[currentDayIdx].text])
     console.log("currMenuObj ", currMenuObj);
-    console.log(days);
     setMenuItem(menuItem);
+    setFoodSizeValue(currMenuObj.size)
+    console.log(foodSizeValue)
     setLoading(false);
   };
 
@@ -85,7 +90,7 @@ const HomeGo = ({route}) => {
     fetchData();
   }, []);
 
-const [buttonData, setButtonData] = useState(initialArr)
+const [buttonData, setButtonData] = useState(horizTabArr)
 
 const changeColorB2 = (buttonInfo, index) =>(e) => {
     let newArrray = [] // You have to create a new object and set it for react to re-render
@@ -95,6 +100,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
     }
     newArrray[index].color = 'white'
     setCurrMenuObj(menuItem[newArrray[index].text])
+    setFoodSizeValue(menuItem[newArrray[index].text].size)
     setButtonData(newArrray);
 }
 
@@ -115,7 +121,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
                 <Image source={require('./images/image-450x180.jpg')} style={styles.backgroundImage}/>
              </View>
              <View style={{flex:0.5, width:'90%', alignSelf:'center'}}>
-                <Text style={{position:'absolute', bottom:0, right:5, fontWeight:'bold', fontSize: 18}}>{message}</Text>
+                <Text style={{position:'absolute', bottom:0, right:5, fontSize: 18, fontFamily:'Futura'}}>{message}</Text>
              </View>
              <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:10}}>
                  <View style={{flex:1, marginRight: -1}}>
@@ -130,7 +136,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', zIndex:1, alignSelf:'center'}}>
                          <Text style={{ fontSize: 18}}>Size / Count   </Text>
-                        <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} open={open} value={value} items={items} setOpen={setOpen} setValue={setValue} setItems={setItems}/>
+                        <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} open={open} value={foodSizeValue} items={foodSizeValues} setOpen={setOpen} setValue={setFoodSizeValue} setItems={setFoodSizeValues}/>
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
@@ -139,7 +145,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <TouchableOpacity style={styles.button} onPress={onPress}>
+                        <TouchableOpacity style={currMenuObj.readonly == 1 ? styles.buttonDisabled : styles.button} onPress={onPress} disabled={currMenuObj.readonly == 1}>
                             <Text style={{color:'white'}}>RSVP</Text>
                         </TouchableOpacity>
                       </View>
@@ -203,6 +209,14 @@ var styles = StyleSheet.create({
         width:'30%',
         borderRadius:5
     },
+    buttonDisabled: {
+      alignItems: 'center',
+      backgroundColor: 'purple',
+      opacity:0.5,
+      padding: 10,
+      width:'30%',
+      borderRadius:5
+  },
     text:{
       color:'white'
       },

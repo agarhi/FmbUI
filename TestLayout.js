@@ -14,8 +14,8 @@ const Tab = createBottomTabNavigator();
 
   return (
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeGo} initialParams={{token:token, message:message}} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Home" component={HomeGo} options={{headerShown: false}} initialParams={{token:token, message:message}} />
+        <Tab.Screen name="Settings" component={SettingsScreen} options={{headerShown: false}}/>
       </Tab.Navigator>
     
   );
