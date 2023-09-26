@@ -29,6 +29,7 @@ const HomeGo = ({route}) => {
   const [mainCourse, setMainCourse] = useState('');
   const [currentMonth, setCurrentMonth] = useState('');
   const [currMenuObj, setCurrMenuObj] = useState('')
+  const [isNoCarbsSelected, setNoCarbsSelection] = useState(false);
   
   const horizTabArr = []
 
@@ -140,7 +141,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                         <Checkbox />
+                         <Checkbox value={isNoCarbsSelected} onValueChange={setNoCarbsSelection}/>
                          <Text style={{textAlign:'center', fontSize: 18, width:'35%'}}>No rice / bread</Text>
                       </View>
                       <Text>{"\n"}</Text>
