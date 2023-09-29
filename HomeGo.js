@@ -10,7 +10,6 @@ const HomeGo = ({route}) => {
     const token = route.params.token
     const message = route.params.message
     const [open, setOpen] = useState(false);
-    const [foodSizeValue, setFoodSizeValue] = useState(null);
     const [foodSizeValues, setFoodSizeValues] = useState([
     {label: 'X Small', value: 'XS'},
     {label: 'Small', value: 'S'},
@@ -19,19 +18,15 @@ const HomeGo = ({route}) => {
     {label: 'X Large', value: 'XL'}
   ]);
 
-  const [data, setData] = useState([]);
-  const [days, setDays] = useState([]);
-  const [jsonData, setJsonData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [menu, setMenu] = useState([]);
-  const [menuItem, setMenuItem] = useState({});
+  const [menuItemMap, setmenuItemMap] = useState({});
   const [backgroundColor, setBackgroundColor] = useState('#E3E3E3');
-  const [mainCourse, setMainCourse] = useState('');
   const [currentMonth, setCurrentMonth] = useState('');
   const [currMenuObj, setCurrMenuObj] = useState('')
   const [isNoCarbsSelected, setNoCarbsSelection] = useState(false);
+  const [currMenuPgOffset, setCurrMenuPgOffset] = useState(0)
   
-  const horizTabArr = []
+  const verticalTabArr = []
 
   const fetchData = async () => {
     console.log('Fetching data ...')
@@ -40,58 +35,51 @@ const HomeGo = ({route}) => {
       headers: {  'Set-Cookie' : token }
     };
 
-    const resp = await fetch("http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset=0", requestOptions);
+    const resp = await fetch("http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset, requestOptions);
     const data = await resp.json();
     let detailsData = data.data
     var dateToday = new DateObject();
-    setCurrentMonth(Moment(dateToday).format('MMM'))
+    
     var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
     let currentDayIdx = 0;
     console.log("detailsData ", detailsData);
 
-    
+    setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
     for(let i = 0; i < detailsData.length; i++) {
 
+      // Get the index of current date in the data so we can show that date white
       const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
       if(dayDtDt == dateTodayInFormat) {
         currentDayIdx = i;
       }
-      menuItem[dayDtDt] = detailsData[i];
 
-      const dayDtDay = Moment(detailsData[i].date).format('ddd');
-      const dayDt = '{"day":"'.concat(dayDtDay).concat('","date":"'.concat(dayDtDt).concat('"}'));
-      days.push(JSON.parse(dayDt));
+      // menuItemMap is a dictionary that uses dates as keys and full menu object as values
+      menuItemMap[dayDtDt] = detailsData[i];
 
+      // start forming the vertical tab array 
       let topRadius = 0, bottomRadius = 0;
-      
       if(i == detailsData.length - 1) {
         bottomRadius = 5
       }
       let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
-      console.log(initialArrCurr)
-      horizTabArr.push(JSON.parse(initialArrCurr))
+      verticalTabArr.push(JSON.parse(initialArrCurr))
     }
 
-    console.log("currentDayIdx  ------>",  currentDayIdx);
-    console.log("horizTabArr[currentDayIdx] ------>",  horizTabArr[currentDayIdx]);
-    console.log("horizTabArr[currentDayIdx].text ------>",  horizTabArr[currentDayIdx].text);
-    console.log("menuItem[horizTabArr[currentDayIdx].text ------>",  menuItem[horizTabArr[currentDayIdx].text]);
-
-    horizTabArr[currentDayIdx].color = 'white'; // default day 
-    setCurrMenuObj(menuItem[horizTabArr[currentDayIdx].text])
-    console.log("currMenuObj ", currMenuObj);
-    setMenuItem(menuItem);
-    setFoodSizeValue(currMenuObj.size)
-    console.log(foodSizeValue)
+    // Just setting a bunch of state variables based on data above
+    verticalTabArr[currentDayIdx].color = 'white'; // default day 
+    setCurrMenuObj(menuItemMap[verticalTabArr[currentDayIdx].text])
+    setmenuItemMap(menuItemMap);
+    console.log("size ", currMenuObj.size)
+    setButtonData(verticalTabArr)
     setLoading(false);
   };
 
-  useEffect(() => {
+  useEffect(effectFunction = () => {
     console.log("useEffect")
     fetchData();
-  }, []);
+  }, [currMenuPgOffset]);
 
-const [buttonData, setButtonData] = useState(horizTabArr)
+const [buttonData, setButtonData] = useState([])
 
 const changeColorB2 = (buttonInfo, index) =>(e) => {
     let newArrray = [] // You have to create a new object and set it for react to re-render
@@ -100,10 +88,15 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
       newArrray[i].color = '#e3e3e3'
     }
     newArrray[index].color = 'white'
-    setCurrMenuObj(menuItem[newArrray[index].text])
-    setFoodSizeValue(menuItem[newArrray[index].text].size)
+    setCurrMenuObj(menuItemMap[newArrray[index].text])
     setButtonData(newArrray);
 }
+
+const changeMenuWeek = (offset) => {
+  let newMenuPgOffset = currMenuPgOffset + offset;
+  setCurrMenuPgOffset(newMenuPgOffset)
+}
+
 
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
   (
@@ -137,7 +130,7 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', zIndex:1, alignSelf:'center'}}>
                          <Text style={{ fontSize: 18}}>Size / Count   </Text>
-                        <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} open={open} value={foodSizeValue} items={foodSizeValues} setOpen={setOpen} setValue={setFoodSizeValue} setItems={setFoodSizeValues}/>
+                        <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} open={open} value={currMenuObj.size} items={foodSizeValues} setOpen={setOpen} setValue={currMenuObj.size} setItems={setFoodSizeValues}/>
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
@@ -157,8 +150,8 @@ const changeColorB2 = (buttonInfo, index) =>(e) => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <Text style={{flex:1, textAlign:'center', color:'blue'}}>{'<<'} Prev week</Text>
-                        <Text style={{flex:1, textAlign:'center', color:'blue'}}>Next week {'>>'}</Text>
+                        <Text style={{flex:1, textAlign:'center', color:'blue'}} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>
+                        <Text style={{flex:1, textAlign:'center', color:'blue'}} onPress={() =>{changeMenuWeek(7)}}>Next week {'>>'}</Text>
                       </View>
                     </View>
                  </View>
