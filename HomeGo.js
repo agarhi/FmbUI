@@ -25,24 +25,38 @@ const HomeGo = ({route}) => {
   const [currMenuObj, setCurrMenuObj] = useState('')
   const [isNoCarbsSelected, setNoCarbsSelection] = useState(false);
   const [currMenuPgOffset, setCurrMenuPgOffset] = useState(0)
+  const [isFetchMode, setFetchMode] = useState(false)
+  const [postBody, setPostBody] = useState(null)
   
   const verticalTabArr = []
 
   const fetchData = async () => {
-    console.log('Fetching data ...')
+        
     const requestOptions = {
-      method: 'GET',
-      headers: {  'Set-Cookie' : token }
+      method: isFetchMode ? 'POST' : 'GET',
+      headers: {  'Set-Cookie' : token },
+      body: isFetchMode ? postBody : null
     };
-
-    const resp = await fetch("http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset, requestOptions);
+    if(isFetchMode) {
+      requestOptions.headers['Content-Type'] = 'application/json'
+      requestOptions.headers['Accept'] = '*/*'
+    }
+    const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
+    console.log('Fetching data', url)
+    let resp
+    try {
+      resp = await fetch(url, requestOptions);
+    } catch (error) {
+      // TypeError: Failed to fetch
+      console.log('There was an error', error);
+    }
     const data = await resp.json();
     let detailsData = data.data
+    console.log('detailsData ', detailsData)
     var dateToday = new DateObject();
     
     var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
     let currentDayIdx = 0;
-    console.log("detailsData ", detailsData);
 
     setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
     for(let i = 0; i < detailsData.length; i++) {
@@ -69,19 +83,17 @@ const HomeGo = ({route}) => {
     verticalTabArr[currentDayIdx].color = 'white'; // default day 
     setCurrMenuObj(menuItemMap[verticalTabArr[currentDayIdx].text])
     setmenuItemMap(menuItemMap);
-    console.log("size ", currMenuObj.size)
     setButtonData(verticalTabArr)
     setLoading(false);
   };
 
   useEffect(effectFunction = () => {
-    console.log("useEffect")
     fetchData();
-  }, [currMenuPgOffset]);
+  }, [currMenuPgOffset, postBody]);
 
 const [buttonData, setButtonData] = useState([])
 
-const changeColorB2 = (buttonInfo, index) =>(e) => {
+const changeColor = (buttonInfo, index) =>(e) => {
     let newArrray = [] // You have to create a new object and set it for react to re-render
     for(let i = 0; i < buttonData.length; i++) {
       newArrray.push(buttonData[i])
@@ -101,13 +113,16 @@ const changeMenuWeek = (offset) => {
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
   (
     <TouchableOpacity style={{backgroundColor:buttonInfo.color,flex:1, padding: 15, borderTopLeftRadius:buttonInfo.topRadius, borderBottomLeftRadius:buttonInfo.bottomRadius,justifyContent:'center'}} 
-    onPress={changeColorB2(buttonInfo, index)} key={buttonInfo.id}>
+    onPress={changeColor(buttonInfo, index)} key={buttonInfo.id}>
         <Text style={{fontSize:10}}>{buttonInfo.text}</Text>
     </TouchableOpacity>
   ));
 
-  const onPress = () => {
-
+  const onRsvpPress = () => {
+    let rsvpValue = currMenuObj.rsvp == 1 ? "false" : "true"
+    let postBody ='{"'.concat(currMenuObj.date).concat('":{"rsvp":'.concat(rsvpValue).concat('}}'));
+    setPostBody(postBody)
+    setFetchMode(true)
   }
     return (
         <View style={{flexDirection:'column', flex:1}}>
@@ -139,8 +154,8 @@ const changeMenuWeek = (offset) => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <TouchableOpacity style={currMenuObj.readonly == 1 ? styles.buttonDisabled : styles.button} onPress={onPress} disabled={currMenuObj.readonly == 1}>
-                            <Text style={{color:'white'}}>RSVP</Text>
+                        <TouchableOpacity style={currMenuObj.readonly == 1 ? styles.buttonDisabled : styles.button} onPress={onRsvpPress} disabled={currMenuObj.readonly == 1}>
+                            <Text style={{color:'white'}}>{currMenuObj.rsvp == 1 ? 'Yes' : 'No'}</Text>
                         </TouchableOpacity>
                       </View>
                       <Text>{"\n"}</Text>

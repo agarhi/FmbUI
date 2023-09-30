@@ -17,8 +17,6 @@ const LoginScreen = ({navigation}) => {
       const resp = await fetch('http://sfjamaat.org/sf/faiz/login.php?offset=0&date=', requestOptions);
       const data = await resp.json();
       const headers = resp.headers;
-      console.log("data ", data.data)
-      console.log("headers ", headers.get("set-cookie"))
       navigation.navigate('TestLayout', {
         token: headers.get("set-cookie"),
         message: data.data
