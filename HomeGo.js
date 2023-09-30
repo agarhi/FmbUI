@@ -20,17 +20,18 @@ const HomeGo = ({route}) => {
 
   const [loading, setLoading] = useState(true);
   const [menuItemMap, setmenuItemMap] = useState({});
-  const [backgroundColor, setBackgroundColor] = useState('#E3E3E3');
+  const [backgroundColor, setBackgroundColor] = useState('#006400');
   const [currentMonth, setCurrentMonth] = useState('');
   const [currMenuObj, setCurrMenuObj] = useState('')
   const [isNoCarbsSelected, setNoCarbsSelection] = useState(false);
   const [currMenuPgOffset, setCurrMenuPgOffset] = useState(0)
   const [isFetchMode, setFetchMode] = useState(false)
   const [postBody, setPostBody] = useState(null)
+  const [userIdxChoice, setUserIdxChoice] = useState(0)
   
   const verticalTabArr = []
 
-  const fetchData = async () => {
+  const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
         
     const requestOptions = {
       method: isFetchMode ? 'POST' : 'GET',
@@ -63,7 +64,7 @@ const HomeGo = ({route}) => {
 
       // Get the index of current date in the data so we can show that date white
       const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
-      if(dayDtDt == dateTodayInFormat) {
+      if(currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
         currentDayIdx = i;
       }
 
@@ -79,9 +80,9 @@ const HomeGo = ({route}) => {
       verticalTabArr.push(JSON.parse(initialArrCurr))
     }
 
-    // Just setting a bunch of state variables based on data above
-    verticalTabArr[currentDayIdx].color = 'white'; // default day 
-    setCurrMenuObj(menuItemMap[verticalTabArr[currentDayIdx].text])
+    // Just setting a bunch of state variables based on data received
+    verticalTabArr[isFetchMode ? userIdxChoice : currentDayIdx].color = 'white'; // default day 
+    setCurrMenuObj(menuItemMap[verticalTabArr[isFetchMode ? userIdxChoice : currentDayIdx].text])
     setmenuItemMap(menuItemMap);
     setButtonData(verticalTabArr)
     setLoading(false);
@@ -102,11 +103,13 @@ const changeColor = (buttonInfo, index) =>(e) => {
     newArrray[index].color = 'white'
     setCurrMenuObj(menuItemMap[newArrray[index].text])
     setButtonData(newArrray);
+    setUserIdxChoice(index)
 }
 
 const changeMenuWeek = (offset) => {
   let newMenuPgOffset = currMenuPgOffset + offset;
   setCurrMenuPgOffset(newMenuPgOffset)
+  setFetchMode(false)
 }
 
 
