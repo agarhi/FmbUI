@@ -153,7 +153,7 @@ const changeMenuWeek = (offset) => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                         <Checkbox value={isNoCarbsSelected} onValueChange={setNoCarbsSelection}/>
+                         <Checkbox value={currMenuObj.lessRice == 1} onValueChange={setNoCarbsSelection}/>
                          <Text style={{textAlign:'center', fontSize: 18, width:'35%'}}>No rice / bread</Text>
                       </View>
                       <Text>{"\n"}</Text>
