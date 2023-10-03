@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Checkbox from 'expo-checkbox';
 import Moment from 'moment';
 import DateObject from "react-date-object";
+import { Icon } from 'react-native-elements'
 
 const HomeGo = ({route}) => {
     const token = route.params.token
@@ -174,6 +175,12 @@ const changeMenuWeek = (offset) => {
                     </View>
                  </View>
              </View>
+             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:10, flexDirection:'row', alignContent:'center'}}>
+             <TouchableOpacity style={styles.navBarLeftButton}>
+                <Icon name="view-week" />
+                  <Text style={styles.buttonText}>   Rsvp Full Week</Text>
+              </TouchableOpacity>
+             </View>
              <View style={{flex:1}}></View>
         </View>
       
@@ -238,6 +245,15 @@ var styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: '#fff',
     },
+    navBarLeftButton: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    },
+    buttonText: {
+      fontSize: 18
+    }
   });
 
 export default HomeGo;
