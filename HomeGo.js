@@ -55,41 +55,46 @@ const HomeGo = ({route}) => {
       console.log('There was an error', error);
     }
     const data = await resp.json();
-    let detailsData = data.data
-    console.log('detailsData ', detailsData)
-    var dateToday = new DateObject();
-    
-    var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
-    let currentDayIdx = 0;
+   if(data.data!=null) {
+      let detailsData = data.data
+      console.log('detailsData ', detailsData)
+      var dateToday = new DateObject();
+      
+      var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
+      let currentDayIdx = 0;
 
-    setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
-    for(let i = 0; i < detailsData.length; i++) {
+      setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
+      for(let i = 0; i < detailsData.length; i++) {
 
-      // Get the index of current date in the data so we can show that date white
-      const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
-      if(currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
-        currentDayIdx = i;
+        // Get the index of current date in the data so we can show that date white
+        const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
+        if(currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
+          currentDayIdx = i;
+        }
+
+        // menuItemMap is a dictionary that uses dates as keys and full menu object as values
+        menuItemMap[dayDtDt] = detailsData[i];
+        lessRiceMap[dayDtDt] = detailsData[i].lessRice == 1 ? true : false;
+        // start forming the vertical tab array 
+        let topRadius = 0, bottomRadius = 0;
+        if(i == detailsData.length - 1) {
+          bottomRadius = 5
+        }
+        let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
+        verticalTabArr.push(JSON.parse(initialArrCurr))
       }
-
-      // menuItemMap is a dictionary that uses dates as keys and full menu object as values
-      menuItemMap[dayDtDt] = detailsData[i];
-      lessRiceMap[dayDtDt] = detailsData[i].lessRice == 1 ? true : false;
-      // start forming the vertical tab array 
-      let topRadius = 0, bottomRadius = 0;
-      if(i == detailsData.length - 1) {
-        bottomRadius = 5
-      }
-      let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
-      verticalTabArr.push(JSON.parse(initialArrCurr))
-    }
-    // Just setting a bunch of state variables based on data received
-    let idx = isFetchMode ? userIdxChoice : currentDayIdx
-    verticalTabArr[idx].color = 'white'; // default day 
-    setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
-    setmenuItemMap(menuItemMap);
-    setButtonData(verticalTabArr)
-    setDaySelected(verticalTabArr[idx].text)
-    setLoading(false);
+      // Just setting a bunch of state variables based on data received
+      let idx = isFetchMode ? userIdxChoice : currentDayIdx
+      verticalTabArr[idx].color = 'white'; // default day 
+      setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
+      setmenuItemMap(menuItemMap);
+      setButtonData(verticalTabArr)
+      setDaySelected(verticalTabArr[idx].text)
+      setLoading(false);
+   } else {
+    alert(data.msg);
+   }
+   
   };
 
   useEffect(effectFunction = () => {
