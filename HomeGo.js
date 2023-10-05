@@ -2,10 +2,10 @@ import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity} from "reac
 import { Box, FlatList, Center, NativeBaseProvider } from "native-base";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useState, useEffect } from 'react';
-import Checkbox from 'expo-checkbox';
 import Moment from 'moment';
 import DateObject from "react-date-object";
 import { Icon } from 'react-native-elements'
+import Checkbox from 'expo-checkbox';
 
 const HomeGo = ({route}) => {
     const token = route.params.token
@@ -24,11 +24,13 @@ const HomeGo = ({route}) => {
   const [backgroundColor, setBackgroundColor] = useState('#006400');
   const [currentMonth, setCurrentMonth] = useState('');
   const [currMenuObj, setCurrMenuObj] = useState('')
-  const [isNoCarbsSelected, setNoCarbsSelection] = useState(false);
+  const [isLessCarbsSelected, setLessCarbsSelection] = useState(true);
   const [currMenuPgOffset, setCurrMenuPgOffset] = useState(0)
   const [isFetchMode, setFetchMode] = useState(false)
   const [postBody, setPostBody] = useState(null)
   const [userIdxChoice, setUserIdxChoice] = useState(0)
+  const [daySelected, setDaySelected] = useState();
+  const [lessRiceMap, setLessRiceMap] = useState({});
   
   const verticalTabArr = []
 
@@ -71,7 +73,7 @@ const HomeGo = ({route}) => {
 
       // menuItemMap is a dictionary that uses dates as keys and full menu object as values
       menuItemMap[dayDtDt] = detailsData[i];
-
+      lessRiceMap[dayDtDt] = detailsData[i].lessRice == 1 ? true : false;
       // start forming the vertical tab array 
       let topRadius = 0, bottomRadius = 0;
       if(i == detailsData.length - 1) {
@@ -80,12 +82,13 @@ const HomeGo = ({route}) => {
       let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
       verticalTabArr.push(JSON.parse(initialArrCurr))
     }
-
     // Just setting a bunch of state variables based on data received
-    verticalTabArr[isFetchMode ? userIdxChoice : currentDayIdx].color = 'white'; // default day 
-    setCurrMenuObj(menuItemMap[verticalTabArr[isFetchMode ? userIdxChoice : currentDayIdx].text])
+    let idx = isFetchMode ? userIdxChoice : currentDayIdx
+    verticalTabArr[idx].color = 'white'; // default day 
+    setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
     setmenuItemMap(menuItemMap);
     setButtonData(verticalTabArr)
+    setDaySelected(verticalTabArr[idx].text)
     setLoading(false);
   };
 
@@ -93,8 +96,10 @@ const HomeGo = ({route}) => {
     fetchData();
   }, [currMenuPgOffset, postBody]);
 
+
 const [buttonData, setButtonData] = useState([])
 
+// Change the color of menu tab user taps on
 const changeColor = (buttonInfo, index) =>(e) => {
     let newArrray = [] // You have to create a new object and set it for react to re-render
     for(let i = 0; i < buttonData.length; i++) {
@@ -104,15 +109,25 @@ const changeColor = (buttonInfo, index) =>(e) => {
     newArrray[index].color = 'white'
     setCurrMenuObj(menuItemMap[newArrray[index].text])
     setButtonData(newArrray);
-    setUserIdxChoice(index)
+    setUserIdxChoice(index);
+    setDaySelected(newArrray[index].text)
 }
 
+// Change menu view week
 const changeMenuWeek = (offset) => {
   let newMenuPgOffset = currMenuPgOffset + offset;
   setCurrMenuPgOffset(newMenuPgOffset)
   setFetchMode(false)
 }
 
+const checkboxClicked = () => {
+  let tempLessRiceMap = {}
+  for(var key in lessRiceMap) {
+    tempLessRiceMap[key] = lessRiceMap[key]
+  }
+  tempLessRiceMap[daySelected] = !tempLessRiceMap[daySelected]
+  setLessRiceMap(tempLessRiceMap)
+}
 
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
   (
@@ -124,7 +139,9 @@ const changeMenuWeek = (offset) => {
 
   const onRsvpPress = () => {
     let rsvpValue = currMenuObj.rsvp == 1 ? "false" : "true"
-    let postBody ='{"'.concat(currMenuObj.date).concat('":{"rsvp":'.concat(rsvpValue).concat('}}'));
+    console.log('"lessRice":'.concat(lessRiceMap[daySelected]))
+    let postBody ='{"'.concat(currMenuObj.date).concat('":{"rsvp":'.concat(rsvpValue).concat(',"lessRice":'.concat(lessRiceMap[daySelected])).concat('}}'));
+    console.log("postBody ", postBody)
     setPostBody(postBody)
     setFetchMode(true)
   }
@@ -153,7 +170,7 @@ const changeMenuWeek = (offset) => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                         <Checkbox value={currMenuObj.lessRice == 1} onValueChange={setNoCarbsSelection}/>
+                         <Checkbox disabled={currMenuObj.readonly == 1} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
                          <Text style={{textAlign:'center', fontSize: 18, width:'35%'}}>No rice / bread</Text>
                       </View>
                       <Text>{"\n"}</Text>
