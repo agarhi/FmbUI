@@ -31,6 +31,7 @@ const HomeGo = ({route}) => {
   const [userIdxChoice, setUserIdxChoice] = useState(0)
   const [daySelected, setDaySelected] = useState();
   const [lessRiceMap, setLessRiceMap] = useState({});
+  const [weekInfo, setWeekInfo] = useState('');
   
   const verticalTabArr = []
 
@@ -78,7 +79,7 @@ const HomeGo = ({route}) => {
         // start forming the vertical tab array 
         let topRadius = 0, bottomRadius = 0;
         if(i == detailsData.length - 1) {
-          bottomRadius = 5
+          bottomRadius = 10
         }
         let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
         verticalTabArr.push(JSON.parse(initialArrCurr))
@@ -91,6 +92,9 @@ const HomeGo = ({route}) => {
       setButtonData(verticalTabArr)
       setDaySelected(verticalTabArr[idx].text)
       setLoading(false);
+      let weekInfo = Moment( detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment( detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length-1].text.split(',')[1])
+      console.log(weekInfo)
+      setWeekInfo(weekInfo)
    } else {
     alert(data.msg);
    }
@@ -126,12 +130,14 @@ const changeMenuWeek = (offset) => {
 }
 
 const checkboxClicked = () => {
-  let tempLessRiceMap = {}
-  for(var key in lessRiceMap) {
-    tempLessRiceMap[key] = lessRiceMap[key]
-  }
-  tempLessRiceMap[daySelected] = !tempLessRiceMap[daySelected]
-  setLessRiceMap(tempLessRiceMap)
+  let postBody ='{"'.concat(currMenuObj.date).concat('":{"lessRice":'.concat(!lessRiceMap[daySelected])).concat('}}');
+    console.log("postBody lessRice ", postBody)
+    setPostBody(postBody)
+    setFetchMode(true)
+}
+
+const onSizeChange = () => {
+  return currMenuObj.size
 }
 
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
@@ -146,21 +152,23 @@ const checkboxClicked = () => {
     let rsvpValue = currMenuObj.rsvp == 1 ? "false" : "true"
     console.log('"lessRice":'.concat(lessRiceMap[daySelected]))
     let postBody ='{"'.concat(currMenuObj.date).concat('":{"rsvp":'.concat(rsvpValue).concat(',"lessRice":'.concat(lessRiceMap[daySelected])).concat('}}'));
-    console.log("postBody ", postBody)
+    console.log("postBody rsvp ", postBody)
     setPostBody(postBody)
     setFetchMode(true)
   }
     return (
         <View style={{flexDirection:'column', flex:1}}>
-             <View style={{flex:2}}>
-                <Image source={require('./images/image-450x180.jpg')} style={styles.backgroundImage}/>
+          <View style={{flex:0.5}} />
+          <View style={{flex:2, width:'30%', alignSelf:'center'}}>
+                <Image source={require('./images/BrrTop.png')}/>
              </View>
-             <View style={{flex:0.5, width:'90%', alignSelf:'center'}}>
-                <Text style={{position:'absolute', bottom:0, right:5, fontSize: 18, fontFamily:'Futura'}}>{message}</Text>
+             <View style={{flex:0.2, width:'90%', alignSelf:'center', justifyContent:'center', flexDirection:'row'}}>
+               <Text style={{flex:2, fontSize: 16, fontFamily:'Futura', marginLeft:10}}>{message}</Text>
+               <Text style={{flex:1,fontSize: 14, fontFamily:'Futura', textAlign:'right', marginRight:10}}>{weekInfo}</Text>
              </View>
              <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:10}}>
                  <View style={{flex:1, marginRight: -1}}>
-                 <View style={{backgroundColor:'purple', flex:1, padding: 15, borderTopLeftRadius:5, justifyContent:'center'}}>
+                 <View style={{backgroundColor:'purple', flex:1, padding: 15, borderTopLeftRadius:10, justifyContent:'center'}}>
                           <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>{currentMonth}</Text>
                   </View>
                     {buttonsListArr}
@@ -171,7 +179,10 @@ const checkboxClicked = () => {
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', zIndex:1, alignSelf:'center'}}>
                          <Text style={{ fontSize: 18}}>Size / Count   </Text>
-                        <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} open={open} value={currMenuObj.size} items={foodSizeValues} setOpen={setOpen} setValue={currMenuObj.size} setItems={setFoodSizeValues}/>
+                         <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} 
+                         onChangeValue={onSizeChange} open={open} value={currMenuObj.size} 
+                         items={foodSizeValues} setOpen={setOpen} setValue={onSizeChange} 
+                         setItems={setFoodSizeValues}/>
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
@@ -220,7 +231,10 @@ var styles = StyleSheet.create({
     },
     backgroundImage: {
       flex: 1,
-      resizeMode: 'cover', // or 'stretch'
+      resizeMode: 'stretch',
+      height:25,
+      marginTop:25,
+      marginRight:5
     },
     container: {
       flexShrink: 1,
@@ -275,6 +289,9 @@ var styles = StyleSheet.create({
     },
     buttonText: {
       fontSize: 18
+    },
+    html: {
+      fontFamily:'Futura'
     }
   });
 
