@@ -32,6 +32,7 @@ const HomeGo = ({route}) => {
   const [daySelected, setDaySelected] = useState();
   const [lessRiceMap, setLessRiceMap] = useState({});
   const [weekInfo, setWeekInfo] = useState('');
+  const [foodSizeValue, setFoodSizeValue] = useState('');
   
   const verticalTabArr = []
 
@@ -79,7 +80,7 @@ const HomeGo = ({route}) => {
         // start forming the vertical tab array 
         let topRadius = 0, bottomRadius = 0;
         if(i == detailsData.length - 1) {
-          bottomRadius = 10
+          bottomRadius = 15
         }
         let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
         verticalTabArr.push(JSON.parse(initialArrCurr))
@@ -88,6 +89,7 @@ const HomeGo = ({route}) => {
       let idx = isFetchMode ? userIdxChoice : currentDayIdx
       verticalTabArr[idx].color = 'white'; // default day 
       setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
+      setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].size)
       setmenuItemMap(menuItemMap);
       setButtonData(verticalTabArr)
       setDaySelected(verticalTabArr[idx].text)
@@ -117,6 +119,7 @@ const changeColor = (buttonInfo, index) =>(e) => {
     }
     newArrray[index].color = 'white'
     setCurrMenuObj(menuItemMap[newArrray[index].text])
+    setFoodSizeValue(menuItemMap[newArrray[index].text].size)
     setButtonData(newArrray);
     setUserIdxChoice(index);
     setDaySelected(newArrray[index].text)
@@ -136,10 +139,6 @@ const checkboxClicked = () => {
     setFetchMode(true)
 }
 
-const onSizeChange = () => {
-  return currMenuObj.size
-}
-
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
   (
     <TouchableOpacity style={{backgroundColor:buttonInfo.color,flex:1, padding: 15, borderTopLeftRadius:buttonInfo.topRadius, borderBottomLeftRadius:buttonInfo.bottomRadius,justifyContent:'center'}} 
@@ -156,37 +155,49 @@ const onSizeChange = () => {
     setPostBody(postBody)
     setFetchMode(true)
   }
+
+  const onSizeChangeRsvp = (value) => {
+    console.log("v ", value)
+    let postBody ='{"'.concat(currMenuObj.date).concat('":{"size":"'.concat(value).concat('"}}'));
+    console.log("pppppppppostBody size ", postBody)
+    setPostBody(postBody)
+    setFetchMode(true)
+  }
     return (
         <View style={{flexDirection:'column', flex:1}}>
           <View style={{flex:0.5}} />
-          <View style={{flex:2, width:'30%', alignSelf:'center'}}>
-                <Image source={require('./images/BrrTop.png')}/>
+          <View style={{flex:3, alignSelf:'center'}}>
+                <Image source={require('./images/FMB.png')}/>
              </View>
              <View style={{flex:0.2, width:'90%', alignSelf:'center', justifyContent:'center', flexDirection:'row'}}>
-               <Text style={{flex:2, fontSize: 16, fontFamily:'Futura', marginLeft:10}}>{message}</Text>
-               <Text style={{flex:1,fontSize: 14, fontFamily:'Futura', textAlign:'right', marginRight:10}}>{weekInfo}</Text>
+               <Text style={{flex:2, fontSize: 16, fontFamily:'Futura', marginLeft:15}}>{message}</Text>
+               <Text style={{flex:1,fontSize: 14, fontFamily:'Futura', textAlign:'right', marginRight:15}}>{weekInfo}</Text>
              </View>
-             <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:10}}>
+             <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:15}}>
                  <View style={{flex:1, marginRight: -1}}>
                  <View style={{backgroundColor:'purple', flex:1, padding: 15, borderTopLeftRadius:10, justifyContent:'center'}}>
                           <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>{currentMonth}</Text>
                   </View>
                     {buttonsListArr}
                  </View>
-                 <View style={{backgroundColor: 'white', flex:5, borderTopRightRadius:10, borderBottomRightRadius:10}}>
+                 <View style={{backgroundColor: 'white', flex:5, borderTopRightRadius:15, borderBottomRightRadius:15}}>
                     <View style={{marginTop:20}}>
                       <Text style={{textAlign:'center', fontWeight: 'bold', fontSize: 18}}>{currMenuObj.details}</Text>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', zIndex:1, alignSelf:'center'}}>
                          <Text style={{ fontSize: 18}}>Size / Count   </Text>
                          <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} 
-                         onChangeValue={onSizeChange} open={open} value={currMenuObj.size} 
-                         items={foodSizeValues} setOpen={setOpen} setValue={onSizeChange} 
-                         setItems={setFoodSizeValues}/>
+                          open={open} value={foodSizeValue} 
+                         items={foodSizeValues} setOpen={setOpen} setValue={setFoodSizeValue} 
+                         setItems={setFoodSizeValues} 
+                         onChangeValue={(value) => {
+                         onSizeChangeRsvp(value) 
+                        }} disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}
+                        />
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                         <Checkbox disabled={currMenuObj.readonly == 1} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
+                         <Checkbox disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
                          <Text style={{textAlign:'center', fontSize: 18, width:'35%'}}>No rice / bread</Text>
                       </View>
                       <Text>{"\n"}</Text>
