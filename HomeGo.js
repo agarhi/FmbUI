@@ -33,6 +33,7 @@ const HomeGo = ({route}) => {
   const [lessRiceMap, setLessRiceMap] = useState({});
   const [weekInfo, setWeekInfo] = useState('');
   const [foodSizeValue, setFoodSizeValue] = useState('');
+  const [rsvpAllPayloadMap, setRsvpAllPayloadMap] = useState({})
   
   const verticalTabArr = []
 
@@ -46,9 +47,11 @@ const HomeGo = ({route}) => {
     if(isFetchMode) {
       requestOptions.headers['Content-Type'] = 'application/json'
       requestOptions.headers['Accept'] = '*/*'
+      requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
     }
     const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
     console.log('Fetching data', url)
+    console.log('Fetch mode', isFetchMode)
     let resp
     try {
       resp = await fetch(url, requestOptions);
@@ -66,10 +69,12 @@ const HomeGo = ({route}) => {
       let currentDayIdx = 0;
 
       setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
+      let rsvpTruStr = {"rsvp":true};
       for(let i = 0; i < detailsData.length; i++) {
-
+        let menuDate = detailsData[i].date;
+        rsvpAllPayloadMap[menuDate] = rsvpTruStr;
         // Get the index of current date in the data so we can show that date white
-        const dayDtDt = Moment(detailsData[i].date).format('ddd, DD');
+        const dayDtDt = Moment(menuDate).format('ddd, DD');
         if(currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
           currentDayIdx = i;
         }
@@ -97,6 +102,7 @@ const HomeGo = ({route}) => {
       let weekInfo = Moment( detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment( detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length-1].text.split(',')[1])
       console.log(weekInfo)
       setWeekInfo(weekInfo)
+      setRsvpAllPayloadMap(rsvpAllPayloadMap)
    } else {
     alert(data.msg);
    }
@@ -163,10 +169,18 @@ const checkboxClicked = () => {
     setPostBody(postBody)
     setFetchMode(true)
   }
+
+  const onRsvpAll = () => {
+    console.log('rsvp all body ', rsvpAllPayloadMap)
+    let tempStr = rsvpAllPayloadMap
+    setPostBody(JSON.stringify(tempStr))
+    setFetchMode(true)
+  }
+
     return (
-        <View style={{flexDirection:'column', flex:1}}>
+        <View style={{flexDirection:'column', flex:1, backgroundColor: '#ecf0f1'}}>
           <View style={{flex:0.5}} />
-          <View style={{flex:3, alignSelf:'center'}}>
+          <View style={{flex:2.5, alignSelf:'center', borderWidth:0}}>
                 <Image source={require('./images/FMB.png')}/>
              </View>
              <View style={{flex:0.2, width:'90%', alignSelf:'center', justifyContent:'center', flexDirection:'row'}}>
@@ -175,7 +189,7 @@ const checkboxClicked = () => {
              </View>
              <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:15}}>
                  <View style={{flex:1, marginRight: -1}}>
-                 <View style={{backgroundColor:'purple', flex:1, padding: 15, borderTopLeftRadius:10, justifyContent:'center'}}>
+                 <View style={{backgroundColor:'#4c7031',  flex:1, padding: 15, borderTopLeftRadius:10, justifyContent:'center'}}>
                           <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>{currentMonth}</Text>
                   </View>
                     {buttonsListArr}
@@ -208,19 +222,19 @@ const checkboxClicked = () => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <Text style={{flex:1, textAlign:'center', color:'blue'}}>Special Instructions</Text>
-                        <Text style={{flex:1, textAlign:'center', color:'blue'}}>Provide Feedback</Text>
+                        <Text style={styles.links}>Special Instructions</Text>
+                        <Text style={styles.links}>Provide Feedback</Text>
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <Text style={{flex:1, textAlign:'center', color:'blue'}} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>
-                        <Text style={{flex:1, textAlign:'center', color:'blue'}} onPress={() =>{changeMenuWeek(7)}}>Next week {'>>'}</Text>
+                        <Text style={styles.links} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>
+                        <Text style={styles.links} onPress={() =>{changeMenuWeek(7)}}>Next week {'>>'}</Text>
                       </View>
                     </View>
                  </View>
              </View>
              <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:10, flexDirection:'row', alignContent:'center'}}>
-             <TouchableOpacity style={styles.navBarLeftButton}>
+             <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpAll}>
                 <Icon name="view-week" />
                   <Text style={styles.buttonText}>   Rsvp Full Week</Text>
               </TouchableOpacity>
@@ -233,6 +247,12 @@ const checkboxClicked = () => {
 }
 
 var styles = StyleSheet.create({
+  links: {
+    flex:1,
+    color:'#2b4257',
+    fontWeight: 'bold',
+    textAlign:'center'
+  },
     daymenu: {
       height:250,
       backgroundColor: 'white',
@@ -270,14 +290,14 @@ var styles = StyleSheet.create({
     },
     button: {
         alignItems: 'center',
-        backgroundColor: 'purple',
+        backgroundColor: '#4c7031',
         padding: 10,
         width:'30%',
         borderRadius:5
     },
     buttonDisabled: {
       alignItems: 'center',
-      backgroundColor: 'purple',
+      backgroundColor: '#4c7031',
       opacity:0.5,
       padding: 10,
       width:'30%',
