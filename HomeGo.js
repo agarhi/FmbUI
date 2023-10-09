@@ -26,6 +26,7 @@ const HomeGo = ({route}) => {
   const [currMenuObj, setCurrMenuObj] = useState('')
   const [isLessCarbsSelected, setLessCarbsSelection] = useState(true);
   const [currMenuPgOffset, setCurrMenuPgOffset] = useState(0)
+  const [reverseMenuPgOffset, setReverseCurrMenuPgOffset] = useState(0)
   const [isFetchMode, setFetchMode] = useState(false)
   const [postBody, setPostBody] = useState(null)
   const [userIdxChoice, setUserIdxChoice] = useState(0)
@@ -34,78 +35,85 @@ const HomeGo = ({route}) => {
   const [weekInfo, setWeekInfo] = useState('');
   const [foodSizeValue, setFoodSizeValue] = useState('');
   const [rsvpAllPayloadMap, setRsvpAllPayloadMap] = useState({})
+  const [noDataForTheWeek, setNoDataForTheWeek] = useState(false)
   
   const verticalTabArr = []
 
   const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
-        
-    const requestOptions = {
-      method: isFetchMode ? 'POST' : 'GET',
-      headers: {  'Set-Cookie' : token },
-      body: isFetchMode ? postBody : null
-    };
-    if(isFetchMode) {
-      requestOptions.headers['Content-Type'] = 'application/json'
-      requestOptions.headers['Accept'] = '*/*'
-      requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
-    }
-    const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
-    console.log('Fetching data', url)
-    console.log('Fetch mode', isFetchMode)
-    let resp
-    try {
-      resp = await fetch(url, requestOptions);
-    } catch (error) {
-      // TypeError: Failed to fetch
-      console.log('There was an error', error);
-    }
-    const data = await resp.json();
-   if(data.data!=null) {
-      let detailsData = data.data
-      console.log('detailsData ', detailsData)
-      var dateToday = new DateObject();
-      
-      var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
-      let currentDayIdx = 0;
-
-      setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
-      let rsvpTruStr = {"rsvp":true};
-      for(let i = 0; i < detailsData.length; i++) {
-        let menuDate = detailsData[i].date;
-        rsvpAllPayloadMap[menuDate] = rsvpTruStr;
-        // Get the index of current date in the data so we can show that date white
-        const dayDtDt = Moment(menuDate).format('ddd, DD');
-        if(currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
-          currentDayIdx = i;
-        }
-
-        // menuItemMap is a dictionary that uses dates as keys and full menu object as values
-        menuItemMap[dayDtDt] = detailsData[i];
-        lessRiceMap[dayDtDt] = detailsData[i].lessRice == 1 ? true : false;
-        // start forming the vertical tab array 
-        let topRadius = 0, bottomRadius = 0;
-        if(i == detailsData.length - 1) {
-          bottomRadius = 15
-        }
-        let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
-        verticalTabArr.push(JSON.parse(initialArrCurr))
+    console.log("ndftw ", noDataForTheWeek)
+    if(!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
+      const requestOptions = {
+        method: isFetchMode ? 'POST' : 'GET',
+        headers: {  'Set-Cookie' : token },
+        body: isFetchMode ? postBody : null
+      };
+      if(isFetchMode) {
+        requestOptions.headers['Content-Type'] = 'application/json'
+        requestOptions.headers['Accept'] = '*/*'
+        requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
       }
-      // Just setting a bunch of state variables based on data received
-      let idx = isFetchMode ? userIdxChoice : currentDayIdx
-      verticalTabArr[idx].color = 'white'; // default day 
-      setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
-      setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].size)
-      setmenuItemMap(menuItemMap);
-      setButtonData(verticalTabArr)
-      setDaySelected(verticalTabArr[idx].text)
-      setLoading(false);
-      let weekInfo = Moment( detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment( detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length-1].text.split(',')[1])
-      console.log(weekInfo)
-      setWeekInfo(weekInfo)
-      setRsvpAllPayloadMap(rsvpAllPayloadMap)
-   } else {
-    alert(data.msg);
-   }
+      const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
+      console.log('Fetching data', url)
+      console.log('Fetch mode', isFetchMode)
+      let resp
+      try {
+        resp = await fetch(url, requestOptions);
+      } catch (error) {
+        // TypeError: Failed to fetch
+        console.log('There was an error', error);
+      }
+      const data = await resp.json();
+     if(data.data!=null) {
+        let detailsData = data.data
+        console.log('detailsData ', detailsData)
+        var dateToday = new DateObject();
+        
+        var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
+        let currentDayIdx = 0;
+  
+        setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
+        let rsvpTruStr = {"rsvp":true};
+        for(let i = 0; i < detailsData.length; i++) {
+          let menuDate = detailsData[i].date;
+          rsvpAllPayloadMap[menuDate] = rsvpTruStr;
+          // Get the index of current date in the data so we can show that date white
+          const dayDtDt = Moment(menuDate).format('ddd, DD');
+          if(currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
+            currentDayIdx = i;
+          }
+  
+          // menuItemMap is a dictionary that uses dates as keys and full menu object as values
+          menuItemMap[dayDtDt] = detailsData[i];
+          lessRiceMap[dayDtDt] = detailsData[i].lessRice == 1 ? true : false;
+          // start forming the vertical tab array 
+          let topRadius = 0, bottomRadius = 0;
+          if(i == detailsData.length - 1) {
+            bottomRadius = 15
+          }
+          let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
+          verticalTabArr.push(JSON.parse(initialArrCurr))
+        }
+        // Just setting a bunch of state variables based on data received
+        let idx = isFetchMode ? userIdxChoice : currentDayIdx
+        verticalTabArr[idx].color = 'white'; // default day 
+        setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
+        setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].size)
+        setmenuItemMap(menuItemMap);
+        setButtonData(verticalTabArr)
+        setDaySelected(verticalTabArr[idx].text)
+        setLoading(false);
+        let weekInfo = Moment( detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment( detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length-1].text.split(',')[1])
+        console.log(weekInfo)
+        setWeekInfo(weekInfo)
+        setRsvpAllPayloadMap(rsvpAllPayloadMap)
+        setNoDataForTheWeek(false)
+     } else {
+        alert(data.msg);
+        setNoDataForTheWeek(true)
+        setCurrMenuPgOffset(reverseMenuPgOffset)
+     }
+    }
+    
    
   };
 
@@ -133,9 +141,12 @@ const changeColor = (buttonInfo, index) =>(e) => {
 
 // Change menu view week
 const changeMenuWeek = (offset) => {
+  let oldMenuPgOffset = currMenuPgOffset + 0
+  setReverseCurrMenuPgOffset(oldMenuPgOffset)
   let newMenuPgOffset = currMenuPgOffset + offset;
   setCurrMenuPgOffset(newMenuPgOffset)
   setFetchMode(false)
+  setNoDataForTheWeek(false)
 }
 
 const checkboxClicked = () => {
@@ -162,9 +173,9 @@ const checkboxClicked = () => {
     setFetchMode(true)
   }
 
-  const onSizeChangeRsvp = (value) => {
-    console.log("v ", value)
-    let postBody ='{"'.concat(currMenuObj.date).concat('":{"size":"'.concat(value).concat('"}}'));
+  const onSizeChangeRsvp = (item) => {
+    console.log("v ", item.value)
+    let postBody ='{"'.concat(currMenuObj.date).concat('":{"size":"'.concat(item.value).concat('"}}'));
     console.log("pppppppppostBody size ", postBody)
     setPostBody(postBody)
     setFetchMode(true)
@@ -204,8 +215,8 @@ const checkboxClicked = () => {
                           open={open} value={foodSizeValue} 
                          items={foodSizeValues} setOpen={setOpen} setValue={setFoodSizeValue} 
                          setItems={setFoodSizeValues} 
-                         onChangeValue={(value) => {
-                         onSizeChangeRsvp(value) 
+                         onSelectItem={(value) => {
+                            onSizeChangeRsvp(value) 
                         }} disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}
                         />
                       </View>
