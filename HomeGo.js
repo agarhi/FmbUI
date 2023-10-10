@@ -6,6 +6,7 @@ import Moment from 'moment';
 import DateObject from "react-date-object";
 import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
+import SpInsModal from './SpInstruction'
 
 const HomeGo = ({route}) => {
     const token = route.params.token
@@ -36,6 +37,7 @@ const HomeGo = ({route}) => {
   const [foodSizeValue, setFoodSizeValue] = useState('');
   const [rsvpAllPayloadMap, setRsvpAllPayloadMap] = useState({})
   const [noDataForTheWeek, setNoDataForTheWeek] = useState(false)
+  const [openSpIns, setOpenSpIns] = useState(false)
   
   const verticalTabArr = []
 
@@ -233,9 +235,11 @@ const checkboxClicked = () => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <Text style={styles.links}>Special Instructions</Text>
+                        <Text style={styles.links} onPress={() => setOpenSpIns(true)} 
+                          disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}>Special Instructions</Text>
                         <Text style={styles.links}>Provide Feedback</Text>
                       </View>
+                      <SpInsModal openSpIns={openSpIns} onClose={()=> setOpenSpIns(false)} daySelected={daySelected}/>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                         <Text style={styles.links} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>
