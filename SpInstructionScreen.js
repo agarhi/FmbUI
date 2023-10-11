@@ -1,7 +1,7 @@
 import {View, Text, Modal} from 'react-native'
 import { useState, useEffect } from 'react';
 
-const SpInsModal = ({ openSpIns, onClose, daySelected }) => {
+const SpInsModalScreen = ({ openSpIns, onClose, daySelected }) => {
 
 const [data, setData] = useState('')
 const [header, setHeader] = useState('')
@@ -31,4 +31,4 @@ useEffect(effectFunction = () => {
     );
 }
 
-export default SpInsModal;
+export default SpInsModalScreen;

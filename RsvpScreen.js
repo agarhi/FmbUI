@@ -6,9 +6,9 @@ import Moment from 'moment';
 import DateObject from "react-date-object";
 import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
-import SpInsModal from './SpInstruction'
+import SpInsModalScreen from './SpInstructionScreen'
 
-const Rsvp = ({route}) => {
+const RsvpScreen = ({route}) => {
     const token = route.params.token
     const message = route.params.message
     const [open, setOpen] = useState(false);
@@ -239,7 +239,7 @@ const checkboxClicked = () => {
                           disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}>View Instructions</Text>
                         <Text style={styles.links}>Provide Feedback</Text>
                       </View>
-                      <SpInsModal openSpIns={openSpIns} onClose={()=> setOpenSpIns(false)} daySelected={daySelected}/>
+                      <SpInsModalScreen openSpIns={openSpIns} onClose={()=> setOpenSpIns(false)} daySelected={daySelected}/>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                         <Text style={styles.links} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>
@@ -341,4 +341,4 @@ var styles = StyleSheet.create({
     }
   });
 
-export default Rsvp;
+export default RsvpScreen;
