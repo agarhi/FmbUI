@@ -236,7 +236,7 @@ const checkboxClicked = () => {
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                         <Text style={styles.links} onPress={() => setOpenSpIns(true)} 
-                          disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}>Special Instructions</Text>
+                          disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}>View Instructions</Text>
                         <Text style={styles.links}>Provide Feedback</Text>
                       </View>
                       <SpInsModal openSpIns={openSpIns} onClose={()=> setOpenSpIns(false)} daySelected={daySelected}/>
@@ -248,10 +248,10 @@ const checkboxClicked = () => {
                     </View>
                  </View>
              </View>
-             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:10, flexDirection:'row', alignContent:'center'}}>
+             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:10, marginLeft:15, flexDirection:'row', alignContent:'center'}}>
              <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpAll}>
                 <Icon name="view-week" />
-                  <Text style={styles.buttonText}>   Rsvp Full Week</Text>
+                  <Text style={styles.buttonText}>  Rsvp Full Week</Text>
               </TouchableOpacity>
              </View>
              <View style={{flex:1}}></View>

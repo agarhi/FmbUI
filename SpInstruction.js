@@ -15,7 +15,7 @@ const fetchData = async () => {
 
 useEffect(effectFunction = () => {
     fetchData();
-}, [openSpIns]);
+}, [openSpIns]); // without openSpIns in here, the fetchData is not called on each load: https://stackoverflow.com/questions/61410617/how-to-fetch-data-only-when-the-modal-loads
 
 
     return (
