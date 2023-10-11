@@ -8,7 +8,7 @@ import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
 import SpInsModal from './SpInstruction'
 
-const HomeGo = ({route}) => {
+const Rsvp = ({route}) => {
     const token = route.params.token
     const message = route.params.message
     const [open, setOpen] = useState(false);
@@ -341,4 +341,4 @@ var styles = StyleSheet.create({
     }
   });
 
-export default HomeGo;
+export default Rsvp;

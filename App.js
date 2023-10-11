@@ -3,8 +3,7 @@ import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'; 
 import LoginScreen from './Login'
-import LandingScreen from './Landing'
-import TestLayout from './TestLayout'
+import Landing from './Landing'
 
 const Stack = createStackNavigator();
 function App() {
@@ -12,8 +11,7 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Landing" component={LandingScreen} />
-        <Stack.Screen name="TestLayout" options={{ title: 'Menu & RSVP' }} component={TestLayout} />
+        <Stack.Screen name="Landing" options={{ title: 'Menu & RSVP' }} component={Landing} />
       </Stack.Navigator>
     </NavigationContainer>
   );
