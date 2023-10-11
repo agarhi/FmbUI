@@ -77,7 +77,9 @@ const RsvpScreen = ({route}) => {
         let rsvpTruStr = {"rsvp":true};
         for(let i = 0; i < detailsData.length; i++) {
           let menuDate = detailsData[i].date;
-          rsvpAllPayloadMap[menuDate] = rsvpTruStr;
+          if(new Date(menuDate) > dateToday && detailsData[i].rsvp!=1) {
+            rsvpAllPayloadMap[menuDate] = rsvpTruStr;
+          }
           // Get the index of current date in the data so we can show that date white
           const dayDtDt = Moment(menuDate).format('ddd, DD');
           if(currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
@@ -105,7 +107,7 @@ const RsvpScreen = ({route}) => {
         setDaySelected(verticalTabArr[idx].text)
         setLoading(false);
         let weekInfo = Moment( detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment( detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length-1].text.split(',')[1])
-        console.log(weekInfo)
+        console.log("rsvpAllPayloadMap ", rsvpAllPayloadMap)
         setWeekInfo(weekInfo)
         setRsvpAllPayloadMap(rsvpAllPayloadMap)
         setNoDataForTheWeek(false)
@@ -171,6 +173,7 @@ const checkboxClicked = () => {
     console.log('"lessRice":'.concat(lessRiceMap[daySelected]))
     let postBody ='{"'.concat(currMenuObj.date).concat('":{"rsvp":'.concat(rsvpValue).concat(',"lessRice":'.concat(lessRiceMap[daySelected])).concat('}}'));
     console.log("postBody rsvp ", postBody)
+    setRsvpAllPayloadMap({})
     setPostBody(postBody)
     setFetchMode(true)
   }
