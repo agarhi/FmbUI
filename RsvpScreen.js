@@ -191,6 +191,7 @@ const checkboxClicked = () => {
     let tempStr = rsvpAllPayloadMap
     setPostBody(JSON.stringify(tempStr))
     setFetchMode(true)
+    setRsvpAllPayloadMap({})
   }
 
     return (
