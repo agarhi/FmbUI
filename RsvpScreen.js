@@ -36,6 +36,7 @@ const RsvpScreen = ({route}) => {
   const [weekInfo, setWeekInfo] = useState('');
   const [foodSizeValue, setFoodSizeValue] = useState('');
   const [rsvpAllPayloadMap, setRsvpAllPayloadMap] = useState({})
+  const [rsvpCancelAllPayloadMap, setRsvpCancelAllPayloadMap] = useState({})
   const [noDataForTheWeek, setNoDataForTheWeek] = useState(false)
   const [openSpIns, setOpenSpIns] = useState(false)
   
@@ -75,10 +76,16 @@ const RsvpScreen = ({route}) => {
   
         setCurrentMonth(Moment( detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
         let rsvpTruStr = {"rsvp":true};
+        let rsvpFalsStr = {"rsvp":false};
         for(let i = 0; i < detailsData.length; i++) {
           let menuDate = detailsData[i].date;
-          if(new Date(menuDate) > dateToday && detailsData[i].rsvp!=1) {
-            rsvpAllPayloadMap[menuDate] = rsvpTruStr;
+          if(new Date(menuDate) > dateToday) {
+            if(detailsData[i].rsvp!=1) {
+              rsvpAllPayloadMap[menuDate] = rsvpTruStr;
+            } else {
+              rsvpCancelAllPayloadMap[menuDate] = rsvpFalsStr;
+            }
+            
           }
           // Get the index of current date in the data so we can show that date white
           const dayDtDt = Moment(menuDate).format('ddd, DD');
@@ -107,7 +114,6 @@ const RsvpScreen = ({route}) => {
         setDaySelected(verticalTabArr[idx].text)
         setLoading(false);
         let weekInfo = Moment( detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment( detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length-1].text.split(',')[1])
-        console.log("rsvpAllPayloadMap ", rsvpAllPayloadMap)
         setWeekInfo(weekInfo)
         setRsvpAllPayloadMap(rsvpAllPayloadMap)
         setNoDataForTheWeek(false)
@@ -174,14 +180,7 @@ const checkboxClicked = () => {
     let postBody ='{"'.concat(currMenuObj.date).concat('":{"rsvp":'.concat(rsvpValue).concat(',"lessRice":'.concat(lessRiceMap[daySelected])).concat('}}'));
     console.log("postBody rsvp ", postBody)
     setRsvpAllPayloadMap({})
-    setPostBody(postBody)
-    setFetchMode(true)
-  }
-
-  const onSizeChangeRsvp = (item) => {
-    console.log("v ", item.value)
-    let postBody ='{"'.concat(currMenuObj.date).concat('":{"size":"'.concat(item.value).concat('"}}'));
-    console.log("pppppppppostBody size ", postBody)
+    setRsvpCancelAllPayloadMap({})
     setPostBody(postBody)
     setFetchMode(true)
   }
@@ -192,6 +191,22 @@ const checkboxClicked = () => {
     setPostBody(JSON.stringify(tempStr))
     setFetchMode(true)
     setRsvpAllPayloadMap({})
+  }
+
+  const onRsvpCancelAll = () => {
+    console.log('rsvpCancelAllPayloadMap body ', rsvpCancelAllPayloadMap)
+    let tempStr = rsvpCancelAllPayloadMap
+    setPostBody(JSON.stringify(tempStr))
+    setFetchMode(true)
+    setRsvpCancelAllPayloadMap({})
+  }
+
+  const onSizeChangeRsvp = (item) => {
+    console.log("v ", item.value)
+    let postBody ='{"'.concat(currMenuObj.date).concat('":{"size":"'.concat(item.value).concat('"}}'));
+    console.log("pppppppppostBody size ", postBody)
+    setPostBody(postBody)
+    setFetchMode(true)
   }
 
     return (
@@ -252,10 +267,16 @@ const checkboxClicked = () => {
                     </View>
                  </View>
              </View>
-             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:10, marginLeft:15, flexDirection:'row', alignContent:'center'}}>
+             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:30, marginLeft:15, flexDirection:'row', alignContent:'center'}}>
              <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpAll}>
-                <Icon name="view-week" />
+                <Icon name="star-half" size={20}/>
                   <Text style={styles.buttonText}>  Rsvp for rest of the week</Text>
+              </TouchableOpacity>
+             </View>
+             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:15, marginLeft:15, flexDirection:'row', alignContent:'center'}}>
+             <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpCancelAll}>
+                <Icon name="cancel" size={20} />
+                  <Text style={styles.buttonText}>  Cancel rsvp for rest of the week</Text>
               </TouchableOpacity>
              </View>
              <View style={{flex:1}}></View>
