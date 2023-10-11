@@ -255,7 +255,7 @@ const checkboxClicked = () => {
              <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:10, marginLeft:15, flexDirection:'row', alignContent:'center'}}>
              <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpAll}>
                 <Icon name="view-week" />
-                  <Text style={styles.buttonText}>  Rsvp Full Week</Text>
+                  <Text style={styles.buttonText}>  Rsvp for rest of the week</Text>
               </TouchableOpacity>
              </View>
              <View style={{flex:1}}></View>
