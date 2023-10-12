@@ -12,6 +12,7 @@ const [header, setHeader] = useState('')
 const [thaliNum, setThaliNum] = useState('')
 const [foodQualityValue, setFoodQualityValue] = useState('');
 const [open, setOpen] = useState(false);
+const [feedbackComment, setFeedbackComment] = useState('');
 const [foodQualityValues, setFoodQualityValues] = useState([
     {label: 'Disappointing', value: 'D'},
     {label: 'Satisfactory', value: 'S'},
@@ -22,7 +23,7 @@ const [foodQualityValues, setFoodQualityValues] = useState([
 
 const fetchData = async () => {
     if(openFeedbackModal) {
-        setHeader((daySelected+'').concat(' Feedback'))
+        setHeader((daySelected+'').concat(' Feedbackx'))
         let thali_number = await retrieveThaliNumber()
         setThaliNum('Thali num '.concat(thali_number))
     }
@@ -33,7 +34,6 @@ const retrieveThaliNumber = async () => {
       const value = await AsyncStorage.getItem('thali_num');
       if (value !== null) {
         // We have data!!
-        console.log('TN', value.trim())
         return value.trim()
       }
     } catch (error) {
@@ -73,6 +73,15 @@ useEffect(effectFunction = () => {
                         }} open={open} setOpen={setOpen}
                         />
                       </View>
+                      <View style={{flexDirection:'row', alignItems:'center', marginTop:10, zIndex:1, alignSelf:'center'}}>
+                         <Text style={{ fontSize: 18}}>Comments   </Text>
+                      <TextInput style={styles.input}
+                        multiline={true}
+                        numberOfLines={4}
+                        onChangeText={(text) => setFeedbackComment({text})}
+                        />
+                      </View>
+                      
             <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center', marginTop:30}}>
                 <TouchableOpacity style={styles.button} onPress={onSubmit}>
                     <Text style={{color:'white'}}>Submit</Text>
@@ -98,7 +107,14 @@ var styles = StyleSheet.create({
         padding: 10,
         width:'30%',
         borderRadius:5
-    }
+    },
+    input: {
+        height: 80,
+        width:200,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+      }
     });
 
 export default FeedbackModalScreen;
