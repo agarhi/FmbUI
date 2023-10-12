@@ -7,6 +7,7 @@ import DateObject from "react-date-object";
 import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
 import SpInsModalScreen from './SpInstructionScreen'
+import FeedbackModalScreen from './FeedbackModalScreen'
 
 const RsvpScreen = ({route}) => {
     const token = route.params.token
@@ -38,7 +39,8 @@ const RsvpScreen = ({route}) => {
   const [rsvpAllPayloadMap, setRsvpAllPayloadMap] = useState({})
   const [rsvpCancelAllPayloadMap, setRsvpCancelAllPayloadMap] = useState({})
   const [noDataForTheWeek, setNoDataForTheWeek] = useState(false)
-  const [openSpIns, setOpenSpIns] = useState(false)
+  const [openSpInsModal, setOpenSpInsModal] = useState(false)
+  const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
   
   const verticalTabArr = []
 
@@ -209,6 +211,10 @@ const checkboxClicked = () => {
     setFetchMode(true)
   }
 
+  const isRsvpDisabled = (currMenuObj) => {
+    return currMenuObj.readonly == 1 || currMenuObj.rsvp != 1
+  }
+
     return (
         <View style={{flexDirection:'column', flex:1, backgroundColor: '#ecf0f1'}}>
           <View style={{flex:0.5}} />
@@ -238,12 +244,12 @@ const checkboxClicked = () => {
                          setItems={setFoodSizeValues} 
                          onSelectItem={(value) => {
                             onSizeChangeRsvp(value) 
-                        }} disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}
+                        }} disabled={isRsvpDisabled(currMenuObj)}
                         />
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                         <Checkbox disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
+                         <Checkbox disabled={isRsvpDisabled(currMenuObj)} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
                          <Text style={{textAlign:'center', fontSize: 18, width:'35%'}}>No rice / bread</Text>
                       </View>
                       <Text>{"\n"}</Text>
@@ -254,11 +260,13 @@ const checkboxClicked = () => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <Text style={styles.links} onPress={() => setOpenSpIns(true)} 
-                          disabled={currMenuObj.readonly == 1 || currMenuObj.rsvp != 1}>View Instructions</Text>
-                        <Text style={styles.links}>Provide Feedback</Text>
+                        <Text style={isRsvpDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenSpInsModal(true)} 
+                          disabled={isRsvpDisabled(currMenuObj)}>View Instructions</Text>
+                        <Text style={isRsvpDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenFeedbackModal(true)} 
+                          disabled={isRsvpDisabled(currMenuObj)}>Provide Feedback</Text>
                       </View>
-                      <SpInsModalScreen openSpIns={openSpIns} onClose={()=> setOpenSpIns(false)} daySelected={daySelected}/>
+                      <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={()=> setOpenSpInsModal(false)} daySelected={daySelected}/>
+                      <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={()=> setOpenFeedbackModal(false)} daySelected={daySelected} menuItem={currMenuObj.details}/>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                         <Text style={styles.links} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>
@@ -292,6 +300,13 @@ var styles = StyleSheet.create({
     color:'#2b4257',
     fontWeight: 'bold',
     textAlign:'center'
+  },
+  linksDisabled: {
+    flex:1,
+    color:'#2b4257',
+    fontWeight: 'bold',
+    textAlign:'center',
+    opacity:0.5
   },
     daymenu: {
       height:250,

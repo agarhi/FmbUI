@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { StyleSheet, TextInput } from 'react-native';
+import { AsyncStorage, StyleSheet, TextInput } from 'react-native';
 
 const LoginScreen = ({navigation}) => {
     const  [username, setUsername] = useState('');

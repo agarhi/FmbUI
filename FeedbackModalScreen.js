@@ -1,34 +1,35 @@
 import {View, Text, Modal} from 'react-native'
 import { useState, useEffect } from 'react';
 
-const SpInsModalScreen = ({ openSpInsModal, onClose, daySelected }) => {
+const FeedbackModalScreen = ({ openFeedbackModal, onClose, daySelected, menuItem }) => {
 
 const [data, setData] = useState('')
 const [header, setHeader] = useState('')
 
+
 const fetchData = async () => {
-    if(openSpInsModal) {
-        setHeader((daySelected+'').concat(' Special Instructions'))
-         setData('Salawat on Fruit - Panjatan Pak!')
+    if(openFeedbackModal) {
+        setHeader((daySelected+'').concat(' Feedback'))
+         
     }
 }
 
 useEffect(effectFunction = () => {
     fetchData();
-}, [openSpInsModal]); // without openSpInsModal in here, the fetchData is not called on each load: https://stackoverflow.com/questions/61410617/how-to-fetch-data-only-when-the-modal-loads
+}, [openFeedbackModal]); // without openFeedbackModal in here, the fetchData is not called on each load: https://stackoverflow.com/questions/61410617/how-to-fetch-data-only-when-the-modal-loads
 
 
     return (
       <Modal 
       animationType="slide"
-        visible={openSpInsModal}>
+        visible={openFeedbackModal}>
         <View style={{alignItems:'center', alignSelf:'center', marginTop:100}}>
             <Text style={{fontWeight:'bold', fontSize:25, marginBottom:20}}>{header}</Text>
-           <Text style={{ fontSize:20}}>{data}</Text>
+            <Text style={{ fontSize:20}}>{menuItem}</Text>
            <Text style={{color:'blue', marginTop:20, fontSize:20}} onPress={onClose}>Close</Text>
         </View>
       </Modal>
     );
 }
 
-export default SpInsModalScreen;
+export default FeedbackModalScreen;
