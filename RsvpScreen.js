@@ -1,5 +1,4 @@
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity} from "react-native";
-import { Box, FlatList, Center, NativeBaseProvider } from "native-base";
+import { View, Text, Image, StyleSheet, TouchableOpacity} from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useState, useEffect } from 'react';
 import Moment from 'moment';
@@ -8,6 +7,7 @@ import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
 import SpInsModalScreen from './SpInstructionScreen'
 import FeedbackModalScreen from './FeedbackModalScreen'
+
 
 const RsvpScreen = ({route}) => {
     const token = route.params.token
@@ -125,8 +125,6 @@ const RsvpScreen = ({route}) => {
         setCurrMenuPgOffset(reverseMenuPgOffset)
      }
     }
-    
-   
   };
 
   useEffect(effectFunction = () => {
