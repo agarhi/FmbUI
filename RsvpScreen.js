@@ -213,6 +213,11 @@ const checkboxClicked = () => {
     return currMenuObj.readonly == 1 || currMenuObj.rsvp != 1
   }
 
+  const isFeedbackDisabled = (currMenuObj) => {
+    let selectedDate = new Date((menuItemMap[daySelected]).date)
+    return (selectedDate > new Date()) || currMenuObj.rsvp != 1
+  }
+
     return (
         <View style={{flexDirection:'column', flex:1, backgroundColor: '#ecf0f1'}}>
           <View style={{flex:0.5}} />
@@ -260,8 +265,8 @@ const checkboxClicked = () => {
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                         <Text style={isRsvpDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenSpInsModal(true)} 
                           disabled={isRsvpDisabled(currMenuObj)}>View Instructions</Text>
-                        <Text style={isRsvpDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenFeedbackModal(true)} 
-                          disabled={isRsvpDisabled(currMenuObj)}>Provide Feedback</Text>
+                        <Text style={isFeedbackDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenFeedbackModal(true)} 
+                          disabled={isFeedbackDisabled(currMenuObj)}>Provide Feedback</Text>
                       </View>
                       <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={()=> setOpenSpInsModal(false)} daySelected={daySelected}/>
                       <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={()=> setOpenFeedbackModal(false)} 
