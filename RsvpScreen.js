@@ -264,7 +264,9 @@ const checkboxClicked = () => {
                           disabled={isRsvpDisabled(currMenuObj)}>Provide Feedback</Text>
                       </View>
                       <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={()=> setOpenSpInsModal(false)} daySelected={daySelected}/>
-                      <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={()=> setOpenFeedbackModal(false)} daySelected={daySelected} menuItem={currMenuObj.details}/>
+                      <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={()=> setOpenFeedbackModal(false)} 
+                          daySelected={daySelected} menuItem={currMenuObj.details} 
+                          beneficiary={message}/>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                         <Text style={styles.links} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>

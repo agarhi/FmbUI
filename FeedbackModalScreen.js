@@ -1,11 +1,11 @@
-import {View, Text, Modal, TouchableOpacity, StyleSheet, TextInput} from 'react-native'
+import {View, Text, Modal, TouchableOpacity, StyleSheet, TextInput, ImageBackground} from 'react-native'
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import DropDownPicker from 'react-native-dropdown-picker';
 
 
 
-const FeedbackModalScreen = ({ openFeedbackModal, onClose, daySelected, menuItem }) => {
+const FeedbackModalScreen = ({ openFeedbackModal, onClose, daySelected, menuItem, beneficiary }) => {
 
 const [data, setData] = useState('')
 const [header, setHeader] = useState('')
@@ -23,7 +23,7 @@ const [foodQualityValues, setFoodQualityValues] = useState([
 
 const fetchData = async () => {
     if(openFeedbackModal) {
-        setHeader((daySelected+'').concat(' Feedbackx'))
+        setHeader((daySelected+'').concat(' Feedback'))
         let thali_number = await retrieveThaliNumber()
         setThaliNum('Thali num '.concat(thali_number))
     }
@@ -55,15 +55,24 @@ useEffect(effectFunction = () => {
 
 
     return (
-      <Modal 
+      <Modal style={styles.modal}
       animationType="slide"
         visible={openFeedbackModal}>
-        <View style={{alignItems:'center', alignSelf:'center', marginTop:100}}>
-            <Text style={{fontWeight:'bold', fontSize:25, marginBottom:20}}>{header}</Text>
-            <Text style={{ fontSize:20}}>{menuItem}</Text>
-            <Text style={{ fontSize:20, marginTop:10}}>{thaliNum}</Text>
-            <View style={{flexDirection:'row', alignItems:'center', marginTop:10, zIndex:1, alignSelf:'center'}}>
-                         <Text style={{ fontSize: 18}}>Food Quality   </Text>
+            <View style={styles.mainView}></View>
+        <View style={styles.container}>
+            <View style={{alignContent:'center', alignSelf:'center', marginTop:20 }}>
+                 <Text style={{fontWeight:'bold', fontSize:25, marginBottom:15}}>{header}</Text>
+            </View>
+            <View >
+                <Text style={styles.textHeader}>Menu</Text>
+                 <Text style={styles.text}>{menuItem}</Text>
+            </View>
+            <View >
+                <Text style={styles.textHeader}>Beneficiary</Text>
+                 <Text style={styles.text}>{beneficiary}</Text>
+             </View>
+            <View style={{ marginTop:10, zIndex:1}}>
+                         <Text style={styles.textHeader}>Food Quality   </Text>
                          <DropDownPicker placeholder='Quality' containerStyle={{width: 150}} style={{zIndex:999}} 
                           value={foodQualityValue} 
                          items={foodQualityValues}  setValue={setFoodQualityValue} 
@@ -72,18 +81,20 @@ useEffect(effectFunction = () => {
                             onQualityChange(value) 
                         }} open={open} setOpen={setOpen}
                         />
-                      </View>
-                      <View style={{flexDirection:'row', alignItems:'center', marginTop:10, zIndex:1, alignSelf:'center'}}>
-                         <Text style={{ fontSize: 18}}>Comments   </Text>
+            </View>
+            <View >
+                    <Text style={styles.textHeader}>Comments</Text>
                       <TextInput style={styles.input}
                         multiline={true}
                         numberOfLines={4}
                         onChangeText={(text) => setFeedbackComment({text})}
                         />
-                      </View>
-                      
-            <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center', marginTop:30}}>
-                <TouchableOpacity style={styles.button} onPress={onSubmit}>
+          </View>
+            <View style={{flexDirection:'row', alignItems:'center', alignContent:'center', marginTop:30}}>
+            <TouchableOpacity style={styles.button} onPress={onSubmit}>
+                    <Text style={{color:'white'}}>Close</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, {marginLeft:10}]} onPress={onSubmit}>
                     <Text style={{color:'white'}}>Submit</Text>
                 </TouchableOpacity>
                 </View>
@@ -93,6 +104,9 @@ useEffect(effectFunction = () => {
 }
 
 var styles = StyleSheet.create({
+    mainView: {
+        backgroundColor: '#4c7031',
+    },
       button: {
           alignItems: 'center',
           backgroundColor: '#4c7031',
@@ -109,11 +123,33 @@ var styles = StyleSheet.create({
         borderRadius:5
     },
     input: {
-        height: 80,
-        width:200,
-        margin: 12,
+        backgroundColor:'white',
+        height:70,
+        width:250,
         borderWidth: 1,
         padding: 10,
+      },
+      container: {
+        width:'90%',
+        flexDirection:'column', 
+        alignItems:'left',
+         alignSelf:'center', 
+         marginTop:100,
+         borderRadius:15,
+         paddingLeft:20,
+         paddingBottom:20,
+         backgroundColor: '#ecf0f1'
+      },
+      text: {
+        fontSize:16, 
+      },
+      textHeader: {
+        fontSize:16, 
+        fontWeight:'bold',
+        marginTop:20
+      },
+      modal: {
+        backgroundColor: '#ecf0f1'
       }
     });
 
