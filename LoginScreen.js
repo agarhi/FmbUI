@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { StyleSheet, TextInput } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const LoginScreen = ({navigation}) => {
@@ -39,6 +38,8 @@ const LoginScreen = ({navigation}) => {
 
     return (
       <View style={styles.container}>
+ <Image source={require('./images/FMB.png')}/>
+      <View style={styles.logincontainer}>
       <TextInput
         onChangeText={(username) => setUsername( username )}
         placeholder={'Username'}
@@ -51,20 +52,33 @@ const LoginScreen = ({navigation}) => {
         style={styles.input}
       />
       
-      <TouchableOpacity
-          title="Go to Details"
-          onPress={handleSubmitPress}>
-              <Text>LOGIN</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleSubmitPress}>
+                            <Text style={{color:'white', width:70, textAlign:'center'}}>Login</Text>
+                        </TouchableOpacity>
+
     </View>
+      </View>
+     
     );
   }
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
+      alignSelf:'center',
+      marginTop:200
+    },
+    logincontainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf:'center',
+      padding:30,
       backgroundColor: '#ecf0f1',
+      width: '65%',
+      borderRadius:15,
+      backgroundColor:'white',
+      marginTop:15
+      
     },
     input: {
       width: 200,
@@ -74,6 +88,14 @@ const LoginScreen = ({navigation}) => {
       borderColor: 'black',
       marginBottom: 10,
     },
+    button: {
+      alignItems: 'center',
+      backgroundColor: '#4c7031',
+      padding: 10,
+      width:'30%',
+      borderRadius:5,
+      marginTop:10
+  },
   });
   
   export default LoginScreen;

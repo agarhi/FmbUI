@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity} from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator} from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useState, useEffect } from 'react';
 import Moment from 'moment';
@@ -7,6 +7,7 @@ import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
 import SpInsModalScreen from './SpInstructionScreen'
 import FeedbackModalScreen from './FeedbackModalScreen'
+import moment from "moment";
 
 
 const RsvpScreen = ({route}) => {
@@ -41,11 +42,12 @@ const RsvpScreen = ({route}) => {
   const [noDataForTheWeek, setNoDataForTheWeek] = useState(false)
   const [openSpInsModal, setOpenSpInsModal] = useState(false)
   const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
   
   const verticalTabArr = []
 
   const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
-    console.log("ndftw ", noDataForTheWeek)
+    
     if(!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
       const requestOptions = {
         method: isFetchMode ? 'POST' : 'GET',
@@ -114,11 +116,11 @@ const RsvpScreen = ({route}) => {
         setmenuItemMap(menuItemMap);
         setButtonData(verticalTabArr)
         setDaySelected(verticalTabArr[idx].text)
-        setLoading(false);
         let weekInfo = Moment( detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment( detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length-1].text.split(',')[1])
         setWeekInfo(weekInfo)
         setRsvpAllPayloadMap(rsvpAllPayloadMap)
         setNoDataForTheWeek(false)
+        setIsLoading(false);
      } else {
         alert(data.msg);
         setNoDataForTheWeek(true)
@@ -156,6 +158,7 @@ const changeMenuWeek = (offset) => {
   let newMenuPgOffset = currMenuPgOffset + offset;
   setCurrMenuPgOffset(newMenuPgOffset)
   setFetchMode(false)
+  setIsLoading(true)
   setNoDataForTheWeek(false)
 }
 
@@ -164,6 +167,7 @@ const checkboxClicked = () => {
     console.log("postBody lessRice ", postBody)
     setPostBody(postBody)
     setFetchMode(true)
+    setIsLoading(true)
 }
 
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
@@ -183,6 +187,7 @@ const checkboxClicked = () => {
     setRsvpCancelAllPayloadMap({})
     setPostBody(postBody)
     setFetchMode(true)
+    setIsLoading(true)
   }
 
   const onRsvpAll = () => {
@@ -190,6 +195,7 @@ const checkboxClicked = () => {
     let tempStr = rsvpAllPayloadMap
     setPostBody(JSON.stringify(tempStr))
     setFetchMode(true)
+    setIsLoading(true)
     setRsvpAllPayloadMap({})
   }
 
@@ -198,6 +204,7 @@ const checkboxClicked = () => {
     let tempStr = rsvpCancelAllPayloadMap
     setPostBody(JSON.stringify(tempStr))
     setFetchMode(true)
+    setIsLoading(true)
     setRsvpCancelAllPayloadMap({})
   }
 
@@ -207,6 +214,7 @@ const checkboxClicked = () => {
     console.log("pppppppppostBody size ", postBody)
     setPostBody(postBody)
     setFetchMode(true)
+    setIsLoading(true)
   }
 
   const isRsvpDisabled = (currMenuObj) => {
@@ -218,10 +226,20 @@ const checkboxClicked = () => {
     return (selectedDate > new Date()) || currMenuObj.rsvp != 1
   }
 
+  const isInstructionsDisabled = (currMenuObj) => {
+    var sel_date = Moment((menuItemMap[daySelected]).date).format('MM-DD-YYYY');
+    var to_date = Moment(new DateObject()).format('MM-DD-YYYY');
+    return sel_date!=to_date
+  }
+
     return (
         <View style={{flexDirection:'column', flex:1, backgroundColor: '#ecf0f1'}}>
-          <View style={{flex:0.5}} />
-          <View style={{flex:2.5, alignSelf:'center', borderWidth:0}}>
+          
+        {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <View style={{flexDirection:'column', flex:1, backgroundColor: '#ecf0f1'}}>
+            <View style={{flex:2.5, alignSelf:'center', borderWidth:0}}>
                 <Image source={require('./images/FMB.png')}/>
              </View>
              <View style={{flex:0.2, width:'90%', alignSelf:'center', justifyContent:'center', flexDirection:'row'}}>
@@ -263,8 +281,8 @@ const checkboxClicked = () => {
                       </View>
                       <Text>{"\n"}</Text>
                       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <Text style={isRsvpDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenSpInsModal(true)} 
-                          disabled={isRsvpDisabled(currMenuObj)}>View Instructions</Text>
+                        <Text style={isInstructionsDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenSpInsModal(true)} 
+                          disabled={isInstructionsDisabled(currMenuObj)}>View Instructions</Text>
                         <Text style={isFeedbackDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenFeedbackModal(true)} 
                           disabled={isFeedbackDisabled(currMenuObj)}>Provide Feedback</Text>
                       </View>
@@ -286,7 +304,7 @@ const checkboxClicked = () => {
                   <Text style={styles.buttonText}>  Rsvp for rest of the week</Text>
               </TouchableOpacity>
              </View>
-             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:15, marginLeft:15, flexDirection:'row', alignContent:'center'}}>
+             <View style={{flex:0.4, width:'90%', alignSelf:'center', marginTop:10, marginLeft:15, flexDirection:'row', alignContent:'center'}}>
              <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpCancelAll}>
                 <Icon name="cancel" size={20} />
                   <Text style={styles.buttonText}>  Cancel rsvp for rest of the week</Text>
@@ -294,7 +312,9 @@ const checkboxClicked = () => {
              </View>
              <View style={{flex:1}}></View>
         </View>
-      
+          
+             )}
+        </View>
     );
 
 }
