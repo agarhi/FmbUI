@@ -43,6 +43,7 @@ const RsvpScreen = ({route}) => {
   const [openSpInsModal, setOpenSpInsModal] = useState(false)
   const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
+  const [dataCache, setDataCache] = useState({});
   
   const verticalTabArr = []
 
@@ -62,17 +63,27 @@ const RsvpScreen = ({route}) => {
       const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
       console.log('Fetching data', url)
       console.log('Fetch mode', isFetchMode)
-      let resp
-      try {
-        resp = await fetch(url, requestOptions);
-      } catch (error) {
-        // TypeError: Failed to fetch
-        console.log('There was an error', error);
+      console.log('dataCache[currMenuPgOffset] ', dataCache[currMenuPgOffset])
+      let detailsData
+      if(!isFetchMode && dataCache[currMenuPgOffset]!=null) {
+        detailsData = dataCache[currMenuPgOffset]
+        console.log('Not fetching')
+      } else {
+        let resp
+        try {
+          resp = await fetch(url, requestOptions);
+        } catch (error) {
+          // TypeError: Failed to fetch
+          console.log('There was an error', error);
+        }
+        const data = await resp.json();
+        detailsData = data.data
       }
-      const data = await resp.json();
-     if(data.data!=null) {
-        let detailsData = data.data
+      
+     if(detailsData!=null) {
+        
         console.log('detailsData ', detailsData)
+        dataCache[currMenuPgOffset] = detailsData
         var dateToday = new DateObject();
         
         var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
