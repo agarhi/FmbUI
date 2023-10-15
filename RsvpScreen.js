@@ -222,8 +222,7 @@ const checkboxClicked = () => {
   }
 
   const isFeedbackDisabled = (currMenuObj) => {
-    let selectedDate = new Date((menuItemMap[daySelected]).date)
-    return (selectedDate > new Date()) || currMenuObj.rsvp != 1
+    return isFutureDate((menuItemMap[daySelected]).date) <= 0
   }
 
   const isInstructionsDisabled = (currMenuObj) => {
