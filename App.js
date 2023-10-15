@@ -4,6 +4,7 @@ import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-naviga
 import { createStackNavigator } from '@react-navigation/stack'; 
 import LoginScreen from './LoginScreen'
 import LandingTabs from './LandingTabs'
+import ProfileScreen from './ProfileScreen'
 
 function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
   // If the focused route is not found, we need to assume it's the initial screen
@@ -28,6 +29,7 @@ function App() {
         <Stack.Screen name="LandingTabs" options={({ route }) => ({
             headerTitle: getHeaderTitle(route),
           })} component={LandingTabs} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,0 +1,6 @@
+When there is no data available, you show alert and then loading indicator - the UI is blank. 
+Especially for right after login this is a problem because UI is blank. You should rather show a blank rounded box 
+with dates and Prev and Next (No menu). If the same condition happens on click of Next etc - you should show the alert,
+set isLoading false and show the current selected week's UI
+
+The tab menu icons and probably canva may have license 

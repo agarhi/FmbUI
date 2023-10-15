@@ -10,7 +10,7 @@ import FeedbackModalScreen from './FeedbackModalScreen'
 import moment from "moment";
 
 
-const RsvpScreen = ({route}) => {
+const RsvpScreen = ({route, navigation}) => {
     const token = route.params.token
     const message = route.params.message
     const [open, setOpen] = useState(false);
@@ -240,6 +240,11 @@ const checkboxClicked = () => {
    return isFutureDate((menuItemMap[daySelected]).date) > 0
   }
 
+  const openMenu = () => {}
+  const openProfile = () => {
+    navigation.navigate("Profile")
+  }
+
   /*
   * Returns 0 if passed date is equal to today's date
   * Positive if passed date is in future
@@ -259,8 +264,18 @@ const checkboxClicked = () => {
         <ActivityIndicator />
       ) : (
         <View style={{flexDirection:'column', flex:1, backgroundColor: '#ecf0f1'}}>
-            <View style={{flex:2.5, alignSelf:'center', borderWidth:0}}>
-                <Image source={require('./images/FMB.png')}/>
+            <View style={{flexDirection:'row', flex:2.5, alignSelf:'center', borderWidth:0}}>
+                <View  style={{flex:1, borderWidth:0}}>
+                    <TouchableOpacity style={styles.burger} onPress={openMenu}>
+                    <Icon name="menu" size={25}/>
+                  </TouchableOpacity>
+                  </View>
+                <Image style={{flex:1, marginTop:10, borderWidth:0}} source={require('./images/FMB.png')}/>
+                <View  style={{flex:1, borderWidth:0}}>
+                <TouchableOpacity style={styles.person} onPress={openProfile}>
+                    <Icon name="person" size={25}/>
+                  </TouchableOpacity>
+                  </View>
              </View>
              <View style={{flex:0.2, width:'90%', alignSelf:'center', justifyContent:'center', flexDirection:'row'}}>
                <Text style={{flex:2, fontSize: 16, fontFamily:'Futura', marginLeft:15}}>{message}</Text>
@@ -423,6 +438,16 @@ var styles = StyleSheet.create({
     },
     html: {
       fontFamily:'Futura'
+    },
+    burger: {
+      position: 'absolute',
+      top:10,
+      left:20
+    },
+    person: {
+      position: 'absolute',
+      top:10,
+      right:20
     }
   });
 
