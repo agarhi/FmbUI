@@ -227,9 +227,7 @@ const checkboxClicked = () => {
   }
 
   const isInstructionsDisabled = (currMenuObj) => {
-    var sel_date = Moment((menuItemMap[daySelected]).date).format('MM-DD-YYYY');
-    var to_date = Moment(new DateObject()).format('MM-DD-YYYY');
-    return sel_date!=to_date
+   return isFutureDate((menuItemMap[daySelected]).date) > 0
   }
 
   /*
@@ -241,7 +239,7 @@ const checkboxClicked = () => {
     const dateFormat = 'MM-DD-YYYY'
     var selected_date = Moment(selectedDate).format(dateFormat);
     var today_date = Moment(new DateObject()).format(dateFormat);
-    return (new DateObject(sel_date)) - (new DateObject(to_date))
+    return (new DateObject(selected_date)) - (new DateObject(today_date))
   }
 
     return (
