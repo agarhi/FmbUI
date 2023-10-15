@@ -232,6 +232,18 @@ const checkboxClicked = () => {
     return sel_date!=to_date
   }
 
+  /*
+  * Returns 0 if passed date is equal to today's date
+  * Positive if passed date is in future
+  * Negative if past
+  */
+  const isFutureDate = (selectedDate) => {
+    const dateFormat = 'MM-DD-YYYY'
+    var selected_date = Moment(selectedDate).format(dateFormat);
+    var today_date = Moment(new DateObject()).format(dateFormat);
+    return (new DateObject(sel_date)) - (new DateObject(to_date))
+  }
+
     return (
         <View style={{flexDirection:'column', flex:1, backgroundColor: '#ecf0f1'}}>
           
