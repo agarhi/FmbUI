@@ -326,9 +326,20 @@ const checkboxClicked = () => {
                           daySelected={daySelected} menuItem={currMenuObj.details} 
                           beneficiary={message}/>
                       <Text>{"\n"}</Text>
-                      <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <Text style={styles.links} onPress={() =>{changeMenuWeek(-7)}}>{'<<'} Prev week</Text>
-                        <Text style={styles.links} onPress={() =>{changeMenuWeek(7)}}>Next week {'>>'}</Text>
+                      <View style={{flexDirection:'row'}}>
+                        <View style={{flex:2, flexDirection:'row', borderWidth:0}}>
+                            <TouchableOpacity style={{flexDirection:'row', position:'absolute', right:5}} onPress={() =>{changeMenuWeek(-7)}}>
+                              <Icon style= {{borderWidth:0}} name="arrow-left" size={20}/>
+                              <Text style= {styles.nextPrev}>Prev week</Text>
+                          </TouchableOpacity>
+                        </View>
+                        <View style={{flex:1}}></View>
+                        <View style={{flex:2}}>
+                        <TouchableOpacity style={{flexDirection:'row'}} onPress={() =>{changeMenuWeek(7)}}>
+                              <Text style= {styles.nextPrev}>Next week</Text>
+                              <Icon name="arrow-right" size={20}/>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
                  </View>
@@ -448,7 +459,8 @@ var styles = StyleSheet.create({
       position: 'absolute',
       top:10,
       right:20
-    }
+    },
+    nextPrev: {borderWidth:0, marginTop:2, fontWeight:'bold', color:'#2b4257'}
   });
 
 export default RsvpScreen;
