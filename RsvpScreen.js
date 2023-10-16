@@ -288,11 +288,12 @@ const checkboxClicked = () => {
                   </View>
                     {buttonsListArr}
                  </View>
-                 <View style={{backgroundColor: 'white', flex:5, borderTopRightRadius:15, borderBottomRightRadius:15}}>
-                    <View style={{marginTop:20}}>
-                      <Text style={{textAlign:'center', fontWeight: 'bold', fontSize: 18}}>{currMenuObj.details}</Text>
-                      <Text>{"\n"}</Text>
-                      <View style={{flexDirection:'row', alignItems:'center', zIndex:1, alignSelf:'center'}}>
+                 <View style={{backgroundColor: 'white', flex:5, flexDirection:'column', borderTopRightRadius:15, borderBottomRightRadius:15}}>
+                    <View style={{marginTop:20, flex:5, flexDirection:'column', borderWidth:0}}>
+                      <View style={{flex:1, borderWidth:0}}>
+                          <Text style={{textAlign:'center', fontWeight: 'bold', fontSize: 18}}>{currMenuObj.details}</Text>
+                      </View>
+                     <View style={{flexDirection:'row', flex:1, alignItems:'center', zIndex:1, alignSelf:'center'}}>
                          <Text style={{ fontSize: 18}}>Size / Count   </Text>
                          <DropDownPicker placeholder='Size' containerStyle={{width: 100}} style={{zIndex:999}} 
                           open={open} value={foodSizeValue} 
@@ -303,19 +304,16 @@ const checkboxClicked = () => {
                         }} disabled={isRsvpDisabled(currMenuObj)}
                         />
                       </View>
-                      <Text>{"\n"}</Text>
-                      <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                      <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
                          <Checkbox disabled={isRsvpDisabled(currMenuObj)} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
                          <Text style={{textAlign:'center', fontSize: 18, width:'35%'}}>No rice / bread</Text>
                       </View>
-                      <Text>{"\n"}</Text>
-                      <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                      <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
                         <TouchableOpacity style={currMenuObj.readonly == 1 ? styles.buttonDisabled : styles.button} onPress={onRsvpPress} disabled={currMenuObj.readonly == 1}>
                             <Text style={{color:'white'}}>{currMenuObj.rsvp == 1 ? 'Yes' : 'No'}</Text>
                         </TouchableOpacity>
                       </View>
-                      <Text>{"\n"}</Text>
-                      <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                      <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
                         <Text style={isInstructionsDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenSpInsModal(true)} 
                           disabled={isInstructionsDisabled(currMenuObj)}>View Instructions</Text>
                         <Text style={isFeedbackDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenFeedbackModal(true)} 
@@ -325,8 +323,7 @@ const checkboxClicked = () => {
                       <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={()=> setOpenFeedbackModal(false)} 
                           daySelected={daySelected} menuItem={currMenuObj.details} 
                           beneficiary={message}/>
-                      <Text>{"\n"}</Text>
-                      <View style={{flexDirection:'row'}}>
+                      <View style={{flexDirection:'row', flex:1}}>
                         <View style={{flex:2, flexDirection:'row', borderWidth:0}}>
                             <TouchableOpacity style={{flexDirection:'row', position:'absolute', right:5}} onPress={() =>{changeMenuWeek(-7)}}>
                               <Icon style= {{borderWidth:0}} name="arrow-left" size={20}/>
