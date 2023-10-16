@@ -30,7 +30,7 @@ const RsvpScreen = ({route, navigation}) => {
   const [isLessCarbsSelected, setLessCarbsSelection] = useState(true);
   const [currMenuPgOffset, setCurrMenuPgOffset] = useState(0)
   const [reverseMenuPgOffset, setReverseCurrMenuPgOffset] = useState(0)
-  const [isFetchMode, setFetchMode] = useState(false)
+  const [isPostMode, setPostMode] = useState(false)
   const [postBody, setPostBody] = useState(null)
   const [userIdxChoice, setUserIdxChoice] = useState(0)
   const [daySelected, setDaySelected] = useState();
@@ -48,26 +48,25 @@ const RsvpScreen = ({route, navigation}) => {
   const verticalTabArr = []
 
   const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
-    
     if(!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
       const requestOptions = {
-        method: isFetchMode ? 'POST' : 'GET',
+        method: isPostMode ? 'POST' : 'GET',
         headers: {  'Set-Cookie' : token },
-        body: isFetchMode ? postBody : null
+        body: isPostMode ? postBody : null
       };
-      if(isFetchMode) {
+      if(isPostMode) {
         requestOptions.headers['Content-Type'] = 'application/json'
         requestOptions.headers['Accept'] = '*/*'
         requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
       }
       const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
       console.log('Fetching data', url)
-      console.log('Fetch mode', isFetchMode)
+      console.log('Fetch mode', isPostMode)
       console.log('dataCache[currMenuPgOffset] ', dataCache[currMenuPgOffset])
       let detailsData
-      if(!isFetchMode && dataCache[currMenuPgOffset]!=null) {
+      if(!isPostMode && dataCache[currMenuPgOffset]!=null) {
         detailsData = dataCache[currMenuPgOffset]
-        console.log('Not fetching')
+        console.log('Fetched from cache')
       } else {
         let resp
         try {
@@ -120,7 +119,7 @@ const RsvpScreen = ({route, navigation}) => {
           verticalTabArr.push(JSON.parse(initialArrCurr))
         }
         // Just setting a bunch of state variables based on data received
-        let idx = isFetchMode ? userIdxChoice : currentDayIdx
+        let idx = isPostMode ? userIdxChoice : currentDayIdx
         verticalTabArr[idx].color = 'white'; // default day 
         setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
         setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].size)
@@ -168,7 +167,7 @@ const changeMenuWeek = (offset) => {
   setReverseCurrMenuPgOffset(oldMenuPgOffset)
   let newMenuPgOffset = currMenuPgOffset + offset;
   setCurrMenuPgOffset(newMenuPgOffset)
-  setFetchMode(false)
+  setPostMode(false)
   setIsLoading(true)
   setNoDataForTheWeek(false)
 }
@@ -177,7 +176,7 @@ const checkboxClicked = () => {
   let postBody ='{"'.concat(currMenuObj.date).concat('":{"lessRice":'.concat(!lessRiceMap[daySelected])).concat('}}');
     console.log("postBody lessRice ", postBody)
     setPostBody(postBody)
-    setFetchMode(true)
+    setPostMode(true)
     setIsLoading(true)
 }
 
@@ -197,7 +196,7 @@ const checkboxClicked = () => {
     setRsvpAllPayloadMap({})
     setRsvpCancelAllPayloadMap({})
     setPostBody(postBody)
-    setFetchMode(true)
+    setPostMode(true)
     setIsLoading(true)
   }
 
@@ -205,7 +204,7 @@ const checkboxClicked = () => {
     console.log('rsvp all body ', rsvpAllPayloadMap)
     let tempStr = rsvpAllPayloadMap
     setPostBody(JSON.stringify(tempStr))
-    setFetchMode(true)
+    setPostMode(true)
     setIsLoading(true)
     setRsvpAllPayloadMap({})
   }
@@ -214,7 +213,7 @@ const checkboxClicked = () => {
     console.log('rsvpCancelAllPayloadMap body ', rsvpCancelAllPayloadMap)
     let tempStr = rsvpCancelAllPayloadMap
     setPostBody(JSON.stringify(tempStr))
-    setFetchMode(true)
+    setPostMode(true)
     setIsLoading(true)
     setRsvpCancelAllPayloadMap({})
   }
@@ -224,7 +223,7 @@ const checkboxClicked = () => {
     let postBody ='{"'.concat(currMenuObj.date).concat('":{"size":"'.concat(item.value).concat('"}}'));
     console.log("pppppppppostBody size ", postBody)
     setPostBody(postBody)
-    setFetchMode(true)
+    setPostMode(true)
     setIsLoading(true)
   }
 

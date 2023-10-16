@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { StyleSheet, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const LoginScreen = ({navigation}) => {
@@ -18,11 +19,16 @@ const LoginScreen = ({navigation}) => {
       const resp = await fetch('http://sfjamaat.org/sf/faiz/login.php?offset=0&date=', requestOptions);
       const data = await resp.json();
       const headers = resp.headers;
-      storeData('thali_num', password)
-      navigation.navigate('LandingTabs', {
+      console.log('haider ', headers.get("set-cookie"))
+      if(headers.get("set-cookie") == null) {
+        alert('Invalid creds')
+      } else {
+        storeData('thali_num', password)
+        navigation.navigate('LandingTabs', {
         token: headers.get("set-cookie"),
         message: data.data
       });
+      }
     }
 
     const storeData = async (key, value) => {
