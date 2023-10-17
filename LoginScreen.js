@@ -7,6 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 const LoginScreen = ({navigation}) => {
     const  [username, setUsername] = useState('');
     const  [password, setPassword] = useState('');
+    const  [isError, setError] = useState(false);
+    const  [errorMsg, setErrorMsg] = useState('');
 
     const handleSubmitPress = async () => {
       const requestOptions = {
@@ -21,8 +23,10 @@ const LoginScreen = ({navigation}) => {
       const headers = resp.headers;
       console.log('haider ', headers.get("set-cookie"))
       if(headers.get("set-cookie") == null) {
-        alert('Invalid creds')
+        setError(true)
+        setErrorMsg(data.msg)
       } else {
+        setError(false)
         storeData('thali_num', password)
         navigation.navigate('LandingTabs', {
         token: headers.get("set-cookie"),
@@ -45,24 +49,53 @@ const LoginScreen = ({navigation}) => {
     return (
       <View style={styles.container}>
  <Image source={require('./images/FMB.png')}/>
-      <View style={styles.logincontainer}>
-      <TextInput
-        onChangeText={(username) => setUsername( username )}
-        placeholder={'Username'}
-        style={styles.input}
-      />
-      <TextInput
-        onChangeText={(password) => setPassword( password )}
-        placeholder={'Password'}
-        secureTextEntry={true}
-        style={styles.input}
-      />
       
-      <TouchableOpacity style={styles.button} onPress={handleSubmitPress}>
-                            <Text style={{color:'white', width:70, textAlign:'center'}}>Login</Text>
-                        </TouchableOpacity>
-
-    </View>
+        {isError ? (
+            <View style={styles.logincontainer}>
+              <Text style={{color:'red', marginBottom:10}}>{errorMsg}</Text>
+              <TextInput
+                  onChangeText={(username) => {
+                    setUsername( username )
+                    setError(false)
+                  }}
+                  placeholder={'Username'}
+                  style={styles.input}
+            />
+            <TextInput
+                  onChangeText={(password) => {
+                    setPassword( password ),
+                    setError(false)
+                  }}
+                  placeholder={'Password'}
+                  secureTextEntry={true}
+                  style={styles.input}
+            />
+            
+            <TouchableOpacity style={styles.button} onPress={handleSubmitPress}>
+                                  <Text style={{color:'white', width:70, textAlign:'center'}}>Login</Text>
+                              </TouchableOpacity>
+         </View>
+          ) : (
+           <View style={styles.logincontainer}>
+            <Text style={{opacity:0.5, marginBottom:10}}>Enter Credentials</Text>
+              <TextInput
+                  onChangeText={(username) => setUsername( username )}
+                  placeholder={'Username'}
+                  style={styles.input}
+                />
+            <TextInput
+                  onChangeText={(password) => setPassword( password )}
+                  placeholder={'Password'}
+                  secureTextEntry={true}
+                  style={styles.input}
+                />
+            
+            <TouchableOpacity style={styles.button} onPress={handleSubmitPress}>
+                                  <Text style={{color:'white', width:70, textAlign:'center'}}>Login</Text>
+                              </TouchableOpacity>
+         </View>
+        )
+        }
       </View>
      
     );
@@ -78,13 +111,25 @@ const LoginScreen = ({navigation}) => {
       alignItems: 'center',
       justifyContent: 'center',
       alignSelf:'center',
-      padding:30,
+      padding:20,
       backgroundColor: '#ecf0f1',
       width: '65%',
       borderRadius:15,
       backgroundColor:'white',
       marginTop:15
       
+    },
+    logincontainerWithTopMargin: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf:'center',
+      padding:20,
+      paddingTop:40,
+      backgroundColor: '#ecf0f1',
+      width: '65%',
+      borderRadius:15,
+      backgroundColor:'white',
+      marginTop:15
     },
     input: {
       width: 200,
