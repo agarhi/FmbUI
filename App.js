@@ -28,6 +28,7 @@ function App() {
         <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
         <Stack.Screen name="LandingTabs" options={({ route }) => ({
             headerTitle: getHeaderTitle(route),
+            headerLeft: ()=> null
           })} component={LandingTabs} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
