@@ -60,9 +60,8 @@ const RsvpScreen = ({route, navigation}) => {
         requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
       }
       const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
-      console.log('Fetching data', url)
-      console.log('Fetch mode', isPostMode)
-      console.log('dataCache[currMenuPgOffset] ', dataCache[currMenuPgOffset])
+      console.log('Fetch url ', url)
+      console.log('Post mode', isPostMode)
       let detailsData
       if(!isPostMode && dataCache[currMenuPgOffset]!=null) {
         detailsData = dataCache[currMenuPgOffset]
