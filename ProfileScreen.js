@@ -1,8 +1,11 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
+import {StackActions} from '@react-navigation/native';
 
 const ProfileScreen = ({navigation}) => {
     const handleLogout = async () => {
-        navigation.navigate("Login")
+        // Navigation dispatch calls a navigation action, and popToTop will take
+        // the user back to the very first screen of the stack
+        navigation.dispatch(StackActions.popToTop());
     }
 
     return (
