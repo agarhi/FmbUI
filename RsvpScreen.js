@@ -171,6 +171,8 @@ const changeMenuWeek = (offset) => {
   setNoDataForTheWeek(false)
 }
 
+const changeMenuDay = (offset) => {}
+
 const checkboxClicked = () => {
   let postBody ='{"'.concat(currMenuObj.date).concat('":{"lessRice":'.concat(!lessRiceMap[daySelected])).concat('}}');
     console.log("postBody lessRice ", postBody)
@@ -303,8 +305,20 @@ const checkboxClicked = () => {
                         />
                       </View>
                       <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
-                         <Checkbox disabled={isRsvpDisabled(currMenuObj)} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
-                         <Text style={{textAlign:'center', fontSize: 18, width:'35%'}}>No rice / bread</Text>
+                         <View style={{flex:1, borderWidth:0}}>
+                            <TouchableOpacity style={{flexDirection:'row', marginLeft:5}} onPress={() =>{changeMenuDay(-1)}}>
+                                  <Icon style= {{borderWidth:0}} name="arrow-left" color="#2b4257" size={28}/>
+                              </TouchableOpacity>
+                          </View>
+                         <View style={{flex:4, flexDirection:'row', alignItems:'center', justifyContent:'center', borderWidth:0}}>
+                            <Checkbox disabled={isRsvpDisabled(currMenuObj)} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked}/>
+                            <Text style={{textAlign:'center', fontSize: 18}}>   No rice / bread</Text>
+                          </View>
+                          <View style={{flex:1, borderWidth:0}}>
+                            <TouchableOpacity style={{flexDirection:'row', marginRight:5}} onPress={() =>{changeMenuDay(+1)}}>
+                                  <Icon style= {{borderWidth:0}} name="arrow-right" color="#2b4257" size={28}/>
+                              </TouchableOpacity>
+                          </View>
                       </View>
                       <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
                         <TouchableOpacity style={currMenuObj.readonly == 1 ? styles.buttonDisabled : styles.button} onPress={onRsvpPress} disabled={currMenuObj.readonly == 1}>
