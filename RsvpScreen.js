@@ -147,13 +147,12 @@ const RsvpScreen = ({route, navigation}) => {
 const [buttonData, setButtonData] = useState([])
 
 // Change the color of menu tab user taps on
-const changeColor = (buttonInfo, index, isNextNav) =>(e) => {
-  console.log("isNextNav ", isNextNav)
+const changeMenuDay = (buttonInfo, index, isNextNav) =>(e) => {
     if(isNextNav && index >= buttonData.length) {
-
-      } else if(isNextNav && index == -1) {
-
-      }
+      changeMenuWeek(7)
+    } else if(isNextNav && index == -1) {
+      changeMenuWeek(-7)
+    }
     else {
       let newArrray = [] // You have to create a new object and set it for react to re-render
       for(let i = 0; i < buttonData.length; i++) {
@@ -180,10 +179,6 @@ const changeMenuWeek = (offset) => {
   setNoDataForTheWeek(false)
 }
 
-const changeMenuDay = (offset) => {
-
-}
-
 const checkboxClicked = () => {
   let postBody ='{"'.concat(currMenuObj.date).concat('":{"lessRice":'.concat(!lessRiceMap[daySelected])).concat('}}');
     console.log("postBody lessRice ", postBody)
@@ -195,7 +190,7 @@ const checkboxClicked = () => {
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
   (
     <TouchableOpacity style={{backgroundColor:buttonInfo.color,flex:1, padding: 15, borderTopLeftRadius:buttonInfo.topRadius, borderBottomLeftRadius:buttonInfo.bottomRadius,justifyContent:'center'}} 
-    onPress={changeColor(buttonInfo, index, false)} key={buttonInfo.id}>
+    onPress={changeMenuDay(buttonInfo, index, false)} key={buttonInfo.id}>
         <Text style={{fontSize:10}}>{buttonInfo.text}</Text>
     </TouchableOpacity>
   ));
@@ -317,7 +312,7 @@ const checkboxClicked = () => {
                       </View>
                       <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
                          <View style={{flex:1, borderWidth:0}}>
-                            <TouchableOpacity style={{flexDirection:'row', marginLeft:5}} onPress={() =>{changeMenuDay(-1)}}>
+                            <TouchableOpacity style={{flexDirection:'row', marginLeft:5}} onPress={changeMenuDay(null, userIdxChoice - 1, true)}>
                                   <Icon style= {{borderWidth:0}} name="arrow-left" color="#2b4257" size={28}/>
                               </TouchableOpacity>
                           </View>
@@ -326,7 +321,7 @@ const checkboxClicked = () => {
                             <Text style={{textAlign:'center', fontSize: 18}}>   No rice / bread</Text>
                           </View>
                           <View style={{flex:1, borderWidth:0}}>
-                            <TouchableOpacity style={{flexDirection:'row', marginRight:5}} onPress={changeColor(null, userIdxChoice + 1, true)}>
+                            <TouchableOpacity style={{flexDirection:'row', marginRight:5}} onPress={changeMenuDay(null, userIdxChoice + 1, true)}>
                                   <Icon style= {{borderWidth:0}} name="arrow-right" color="#2b4257" size={28}/>
                               </TouchableOpacity>
                           </View>
