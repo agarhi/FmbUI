@@ -119,6 +119,7 @@ const RsvpScreen = ({route, navigation}) => {
         }
         // Just setting a bunch of state variables based on data received
         let idx = isPostMode ? userIdxChoice : currentDayIdx
+        setUserIdxChoice(idx)
         verticalTabArr[idx].color = 'white'; // default day 
         setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
         setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].size)
@@ -146,18 +147,26 @@ const RsvpScreen = ({route, navigation}) => {
 const [buttonData, setButtonData] = useState([])
 
 // Change the color of menu tab user taps on
-const changeColor = (buttonInfo, index) =>(e) => {
-    let newArrray = [] // You have to create a new object and set it for react to re-render
-    for(let i = 0; i < buttonData.length; i++) {
-      newArrray.push(buttonData[i])
-      newArrray[i].color = '#e3e3e3'
+const changeColor = (buttonInfo, index, isNextNav) =>(e) => {
+  console.log("isNextNav ", isNextNav)
+    if(isNextNav && index >= buttonData.length) {
+
+      } else if(isNextNav && index == -1) {
+
+      }
+    else {
+      let newArrray = [] // You have to create a new object and set it for react to re-render
+      for(let i = 0; i < buttonData.length; i++) {
+        newArrray.push(buttonData[i])
+        newArrray[i].color = '#e3e3e3'
+      }
+      newArrray[index].color = 'white'
+      setCurrMenuObj(menuItemMap[newArrray[index].text])
+      setFoodSizeValue(menuItemMap[newArrray[index].text].size)
+      setButtonData(newArrray);
+      setUserIdxChoice(index);
+      setDaySelected(newArrray[index].text)
     }
-    newArrray[index].color = 'white'
-    setCurrMenuObj(menuItemMap[newArrray[index].text])
-    setFoodSizeValue(menuItemMap[newArrray[index].text].size)
-    setButtonData(newArrray);
-    setUserIdxChoice(index);
-    setDaySelected(newArrray[index].text)
 }
 
 // Change menu view week
@@ -171,7 +180,9 @@ const changeMenuWeek = (offset) => {
   setNoDataForTheWeek(false)
 }
 
-const changeMenuDay = (offset) => {}
+const changeMenuDay = (offset) => {
+
+}
 
 const checkboxClicked = () => {
   let postBody ='{"'.concat(currMenuObj.date).concat('":{"lessRice":'.concat(!lessRiceMap[daySelected])).concat('}}');
@@ -184,7 +195,7 @@ const checkboxClicked = () => {
   const buttonsListArr = buttonData.map((buttonInfo, index) => 
   (
     <TouchableOpacity style={{backgroundColor:buttonInfo.color,flex:1, padding: 15, borderTopLeftRadius:buttonInfo.topRadius, borderBottomLeftRadius:buttonInfo.bottomRadius,justifyContent:'center'}} 
-    onPress={changeColor(buttonInfo, index)} key={buttonInfo.id}>
+    onPress={changeColor(buttonInfo, index, false)} key={buttonInfo.id}>
         <Text style={{fontSize:10}}>{buttonInfo.text}</Text>
     </TouchableOpacity>
   ));
@@ -315,7 +326,7 @@ const checkboxClicked = () => {
                             <Text style={{textAlign:'center', fontSize: 18}}>   No rice / bread</Text>
                           </View>
                           <View style={{flex:1, borderWidth:0}}>
-                            <TouchableOpacity style={{flexDirection:'row', marginRight:5}} onPress={() =>{changeMenuDay(+1)}}>
+                            <TouchableOpacity style={{flexDirection:'row', marginRight:5}} onPress={changeColor(null, userIdxChoice + 1, true)}>
                                   <Icon style= {{borderWidth:0}} name="arrow-right" color="#2b4257" size={28}/>
                               </TouchableOpacity>
                           </View>
