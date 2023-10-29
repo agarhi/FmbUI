@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { StyleSheet, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useIsFocused } from '@react-navigation/native';
 
 
 const LoginScreen = ({navigation}) => {
@@ -9,6 +10,7 @@ const LoginScreen = ({navigation}) => {
     const  [password, setPassword] = useState('');
     const  [isError, setError] = useState(false);
     const  [errorMsg, setErrorMsg] = useState('');
+    const isFocused = useIsFocused(); // sets to true when screen comes back in focus: https://stackoverflow.com/questions/46504660/refresh-previous-screen-on-goback
 
     const handleSubmitPress = async () => {
       const requestOptions = {
@@ -46,6 +48,14 @@ const LoginScreen = ({navigation}) => {
       }
     };
 
+    const handleSignUp = () => {
+      navigation.navigate('SignUp')
+    }
+
+  useEffect(effectFunction = () => {
+    isFocused && setError(false)
+  }, [isFocused]);
+
     return (
       <View style={styles.container}>
  <Image source={require('./images/FMB.png')}/>
@@ -72,8 +82,12 @@ const LoginScreen = ({navigation}) => {
             />
             
             <TouchableOpacity style={styles.button} onPress={handleSubmitPress}>
-                                  <Text style={{color:'white', width:70, textAlign:'center'}}>Login</Text>
-                              </TouchableOpacity>
+                <Text style={{color:'white', width:70, textAlign:'center'}}>Login</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.link} onPress={handleSignUp}>
+                <Text style={{textAlign:'center'}}>Sign Up</Text>
+            </TouchableOpacity>
          </View>
           ) : (
            <View style={styles.logincontainer}>
@@ -93,6 +107,9 @@ const LoginScreen = ({navigation}) => {
             <TouchableOpacity style={styles.button} onPress={handleSubmitPress}>
                                   <Text style={{color:'white', width:70, textAlign:'center'}}>Login</Text>
                               </TouchableOpacity>
+            <TouchableOpacity style={styles.link} onPress={handleSignUp}>
+                <Text style={{textAlign:'center'}}>Sign Up</Text>
+            </TouchableOpacity>
          </View>
         )
         }
@@ -147,6 +164,10 @@ const LoginScreen = ({navigation}) => {
       borderRadius:5,
       marginTop:10
   },
+  link: {
+    alignItems: 'center',
+    marginTop:15
+},
   });
   
   export default LoginScreen;

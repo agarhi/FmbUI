@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './LoginScreen'
 import LandingTabs from './LandingTabs'
 import ProfileScreen from './ProfileScreen'
+import SignUpScreen from './SignUpScreen'
 
 function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
   // If the focused route is not found, we need to assume it's the initial screen
@@ -30,7 +31,8 @@ function App() {
             headerTitle: getHeaderTitle(route),
             headerLeft: ()=> null
           })} component={LandingTabs} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
