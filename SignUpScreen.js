@@ -1,6 +1,33 @@
-import {View, Text, StyleSheet , TextInput, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet , TextInput, TouchableOpacity, Alert} from 'react-native'
+import { useState , useEffect } from 'react';
 
 const SignUpScreen = ({navigation}) => {
+
+    const  [fnmae, setFname] = useState('');
+    const  [lnmae, setLname] = useState('');
+    const  [its, setIts] = useState('');
+    const  [addr1, setAddr1] = useState('');
+    const  [addr2, setAddr2] = useState('');
+    const  [city, setCity] = useState('');
+    const  [zip, setZip] = useState('');
+    const  [state, setState] = useState('');
+    const  [phone, setPhone] = useState('');
+    const  [email, setEmail] = useState('');
+
+    const handleSubmit = () => {
+        let jsonObj = {}
+        jsonObj['fname'] = fnmae
+        jsonObj['lname'] = lnmae
+        jsonObj['its'] = its
+        jsonObj['addr1'] = addr1
+        jsonObj['addr2'] = addr2
+        jsonObj['city'] = city
+        jsonObj['state'] = state
+        jsonObj['zip'] = zip
+        jsonObj['email'] = email
+        jsonObj['phone'] = phone
+        Alert.alert(JSON.stringify(jsonObj))
+    }
 
     return (
         <View style={{flexDirection:'column',flex:1,marginTop:30, borderWidth:0}}>
@@ -10,44 +37,44 @@ const SignUpScreen = ({navigation}) => {
             <View style={styles.columnItem}>
                 <View style={{flex:1,borderWidth:0}}><Text style={styles.textContainer}>Name</Text></View>
                 <View style={{flex:2, alignItems:'left',flexDirection:'row', borderWidth:0}}>
-                    <TextInput style={styles.inputHalf} placeholder={'First'}/>
-                    <TextInput style={styles.inputHalf} placeholder={'Last'}/>
+                    <TextInput style={styles.inputHalf} placeholder={'First'} onChangeText={(text) => {setFname( text )}}/>
+                    <TextInput style={styles.inputHalf} placeholder={'Last'} onChangeText={(text) => {setLname( text )}}/>
                 </View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>ITS</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'ITS'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'ITS'} onChangeText={(text) => {setIts( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Addr Line 1</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Addr Line 1'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Addr Line 1'} onChangeText={(text) => {setAddr1( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Addr Line 2</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Addr Line 2'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Addr Line 2'} onChangeText={(text) => {setAddr2( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>City</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'City'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'City'} onChangeText={(text) => {setCity( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Zip</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Zip'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Zip'} onChangeText={(text) => {setZip( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>State</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'State'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'State'} onChangeText={(text) => {setState( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Phone</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Phone'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Phone'} onChangeText={(text) => {setPhone( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Email</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Email'}/></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Email'} onChangeText={(text) => {setEmail( text )}}/></View>
             </View>
             <View style={{alignSelf:'center', marginBottom:20, borderWidth:0}}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={{color:'white', width:70, textAlign:'center'}}>Submit</Text>
             </TouchableOpacity>
             </View>
