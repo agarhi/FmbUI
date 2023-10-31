@@ -16,9 +16,10 @@ const SignUpScreen = ({navigation}) => {
     const  [email, setEmail] = useState('');
     const  [userid, setUserid] = useState('');
     const  [password, setPassword] = useState('');
+    const  [error, setError] = useState('');
 
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         let jsonObj = {}
         jsonObj['fname'] = fnmae
         jsonObj['lname'] = lnmae
@@ -27,11 +28,38 @@ const SignUpScreen = ({navigation}) => {
         jsonObj['addr2'] = addr2
         jsonObj['city'] = city
         jsonObj['state'] = state
-        jsonObj['coubtry'] = country
+        jsonObj['country'] = country
         jsonObj['zip'] = zip
         jsonObj['email'] = email
         jsonObj['phone'] = phone
-        Alert.alert(JSON.stringify(jsonObj))
+        jsonObj['userid'] = userid
+        jsonObj['password'] = password
+        
+        if(fnmae == '' || lnmae == '' || its == '' || addr1 == '' || 
+            addr2 == '' || city == '' || state == '' || country == '' || 
+            zip == '' || email == '' || phone == '' || userid == '' || password == '') {
+            setError('All fields are necessary')
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify(jsonObj)
+            };
+            requestOptions.headers['Accept'] = '*/*'
+            requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
+            
+            const url = "http://10.0.0.121:8080/fmbApi/user/"
+            let resp
+            try {
+                resp = await fetch(url, requestOptions);
+            } catch (error) {
+                // TypeError: Failed to fetch
+                console.log('There was an error', error);
+            }
+            const data = await resp.json();
+            setError(data)
+        }
+        
     }
 
     return (
@@ -91,6 +119,9 @@ const SignUpScreen = ({navigation}) => {
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                     <Text style={{color:'white', width:70, textAlign:'center'}}>Submit</Text>
                 </TouchableOpacity>
+            </View>
+            <View style={{alignSelf:'center', marginBottom:0, borderWidth:0}}>
+                <Text style={{color:'red'}}>{error}</Text>
             </View>
         </View>
     );
