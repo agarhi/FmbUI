@@ -11,8 +11,12 @@ const SignUpScreen = ({navigation}) => {
     const  [city, setCity] = useState('');
     const  [zip, setZip] = useState('');
     const  [state, setState] = useState('');
+    const  [country, setCountry] = useState('');
     const  [phone, setPhone] = useState('');
     const  [email, setEmail] = useState('');
+    const  [userid, setUserid] = useState('');
+    const  [password, setPassword] = useState('');
+
 
     const handleSubmit = () => {
         let jsonObj = {}
@@ -23,6 +27,7 @@ const SignUpScreen = ({navigation}) => {
         jsonObj['addr2'] = addr2
         jsonObj['city'] = city
         jsonObj['state'] = state
+        jsonObj['coubtry'] = country
         jsonObj['zip'] = zip
         jsonObj['email'] = email
         jsonObj['phone'] = phone
@@ -30,9 +35,9 @@ const SignUpScreen = ({navigation}) => {
     }
 
     return (
-        <View style={{flexDirection:'column',flex:1,marginTop:30, borderWidth:0}}>
+        <View style={{flexDirection:'column',marginTop:30, borderWidth:0, padding:20, borderRadius:15, backgroundColor:'white',width:'90%', alignSelf:'center'}}>
             <View style={{alignSelf:'center', marginBottom:20, borderWidth:0}}>
-                <Text style={{fontWeight:'bold', fontSize:'20'}}>Thali Registration</Text>
+                <Text style={{fontWeight:'bold', fontSize:20}}>Thali Registration</Text>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1,borderWidth:0}}><Text style={styles.textContainer}>Name</Text></View>
@@ -42,8 +47,8 @@ const SignUpScreen = ({navigation}) => {
                 </View>
             </View>
             <View style={styles.columnItem}>
-                <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>ITS</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'ITS'} onChangeText={(text) => {setIts( text )}}/></View>
+                <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>HOF ITS</Text></View>
+                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'HOF ITS'} onChangeText={(text) => {setIts( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Addr Line 1</Text></View>
@@ -55,15 +60,17 @@ const SignUpScreen = ({navigation}) => {
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>City</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'City'} onChangeText={(text) => {setCity( text )}}/></View>
+                <View style={{flex:2, alignItems:'left',flexDirection:'row', borderWidth:0}}>
+                    <TextInput style={styles.inputHalf} placeholder={'City'} onChangeText={(text) => {setCity( text )}}/>  
+                    <TextInput style={styles.inputHalf} placeholder={'Zip'} onChangeText={(text) => {setZip( text )}}/> 
+                </View>
             </View>
             <View style={styles.columnItem}>
-                <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Zip</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Zip'} onChangeText={(text) => {setZip( text )}}/></View>
-            </View>
-            <View style={styles.columnItem}>
-                <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>State</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'State'} onChangeText={(text) => {setState( text )}}/></View>
+                <View style={{flex:1,borderWidth:0}}><Text style={styles.textContainer}>Country</Text></View>
+                <View style={{flex:2, alignItems:'left',flexDirection:'row', borderWidth:0}}>
+                    <TextInput style={styles.inputHalf} placeholder={'State'} onChangeText={(text) => {setState( text )}}/>
+                    <TextInput style={styles.inputHalf} placeholder={'Country'} onChangeText={(text) => {setCountry( text )}}/>
+                </View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Phone</Text></View>
@@ -73,10 +80,17 @@ const SignUpScreen = ({navigation}) => {
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Email</Text></View>
                 <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'Email'} onChangeText={(text) => {setEmail( text )}}/></View>
             </View>
+            <View style={styles.columnItem}>
+                <View style={{flex:1,borderWidth:0}}><Text style={styles.textContainer}>Credentials</Text></View>
+                <View style={{flex:2, alignItems:'left',flexDirection:'row', borderWidth:0}}>
+                    <TextInput style={styles.inputHalf} placeholder={'Userid'} onChangeText={(text) => {setUserid( text )}}/>
+                    <TextInput style={styles.inputHalf} placeholder={'Password'} onChangeText={(text) => {setPassword( text )}}/>
+                </View>
+            </View>
             <View style={{alignSelf:'center', marginBottom:20, borderWidth:0}}>
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={{color:'white', width:70, textAlign:'center'}}>Submit</Text>
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={{color:'white', width:70, textAlign:'center'}}>Submit</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -132,6 +146,15 @@ const styles = StyleSheet.create({
     },
     inputHalf: {
         width: 97,
+        height: 44,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'black',
+        marginBottom: 10,
+        marginRight:6
+      },
+      inputThird: {
+        width: 63,
         height: 44,
         padding: 10,
         borderWidth: 1,
