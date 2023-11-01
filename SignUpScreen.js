@@ -58,10 +58,7 @@ const SignUpScreen = ({navigation}) => {
             }
             const data = await resp.json();
             console.log('data ', data)
-            if(data.status == 200) {
-                setResult(data.successMessage)
-            }
-            
+            setResult(data.status == 200 ? data.successMessage : data.errorMessage)
         }
         
     }
