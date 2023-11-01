@@ -16,7 +16,7 @@ const SignUpScreen = ({navigation}) => {
     const  [email, setEmail] = useState('');
     const  [userid, setUserid] = useState('');
     const  [password, setPassword] = useState('');
-    const  [error, setError] = useState('');
+    const  [result, setResult] = useState('');
 
 
     const handleSubmit = async() => {
@@ -38,7 +38,7 @@ const SignUpScreen = ({navigation}) => {
         if(fnmae == '' || lnmae == '' || its == '' || addr1 == '' || 
             addr2 == '' || city == '' || state == '' || country == '' || 
             zip == '' || email == '' || phone == '' || userid == '' || password == '') {
-            setError('All fields are necessary')
+            setResult('All fields are necessary')
         } else {
             const requestOptions = {
                 method: 'POST',
@@ -51,13 +51,17 @@ const SignUpScreen = ({navigation}) => {
             const url = "http://10.0.0.121:8080/fmbApi/user/"
             let resp
             try {
-                resp = await fetch(url, requestOptions);
+                resp = await fetch(url, requestOptions)
             } catch (error) {
                 // TypeError: Failed to fetch
                 console.log('There was an error', error);
             }
             const data = await resp.json();
-            setError(data)
+            console.log('data ', data)
+            if(data.status == 200) {
+                setResult(data.successMessage)
+            }
+            
         }
         
     }
@@ -121,7 +125,7 @@ const SignUpScreen = ({navigation}) => {
                 </TouchableOpacity>
             </View>
             <View style={{alignSelf:'center', marginBottom:0, borderWidth:0}}>
-                <Text style={{color:'red'}}>{error}</Text>
+                <Text style={{color:'red'}}>{result}</Text>
             </View>
         </View>
     );
