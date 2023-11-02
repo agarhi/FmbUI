@@ -1,11 +1,10 @@
 import {View, Text, StyleSheet , TextInput, TouchableOpacity, Alert} from 'react-native'
 import { useState , useEffect } from 'react';
 
-const SignUpScreen = ({navigation}) => {
-
+const SignUpScreen = ({route, navigation}) => {
+    const its = route.params.its
     const  [fnmae, setFname] = useState('');
     const  [lnmae, setLname] = useState('');
-    const  [its, setIts] = useState('');
     const  [addr1, setAddr1] = useState('');
     const  [addr2, setAddr2] = useState('');
     const  [city, setCity] = useState('');
@@ -67,6 +66,7 @@ const SignUpScreen = ({navigation}) => {
         <View style={{flexDirection:'column',marginTop:30, borderWidth:0, padding:20, borderRadius:15, backgroundColor:'white',width:'90%', alignSelf:'center'}}>
             <View style={{alignSelf:'center', marginBottom:20, borderWidth:0}}>
                 <Text style={{fontWeight:'bold', fontSize:20}}>Thali Registration</Text>
+                <Text style={{fontSize:17, textAlign:'center', marginTop:5, marginBottom:5}}>ITS: {its}</Text>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1,borderWidth:0}}><Text style={styles.textContainer}>Name</Text></View>
@@ -74,10 +74,6 @@ const SignUpScreen = ({navigation}) => {
                     <TextInput style={styles.inputHalf} placeholder={'First'} onChangeText={(text) => {setFname( text )}}/>
                     <TextInput style={styles.inputHalf} placeholder={'Last'} onChangeText={(text) => {setLname( text )}}/>
                 </View>
-            </View>
-            <View style={styles.columnItem}>
-                <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>HOF ITS</Text></View>
-                <View style={{flex:2, alignItems:'left',borderWidth:0}}><TextInput style={styles.input} placeholder={'HOF ITS'} onChangeText={(text) => {setIts( text )}}/></View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>Addr Line 1</Text></View>
@@ -91,13 +87,13 @@ const SignUpScreen = ({navigation}) => {
                 <View style={{flex:1, borderWidth:0}}><Text style={styles.textContainer}>City</Text></View>
                 <View style={{flex:2, alignItems:'left',flexDirection:'row', borderWidth:0}}>
                     <TextInput style={styles.inputHalf} placeholder={'City'} onChangeText={(text) => {setCity( text )}}/>  
-                    <TextInput style={styles.inputHalf} placeholder={'Zip'} onChangeText={(text) => {setZip( text )}}/> 
+                    <TextInput style={styles.inputHalf} placeholder={'State'} onChangeText={(text) => {setState( text )}}/>
                 </View>
             </View>
             <View style={styles.columnItem}>
                 <View style={{flex:1,borderWidth:0}}><Text style={styles.textContainer}>Country</Text></View>
                 <View style={{flex:2, alignItems:'left',flexDirection:'row', borderWidth:0}}>
-                    <TextInput style={styles.inputHalf} placeholder={'State'} onChangeText={(text) => {setState( text )}}/>
+                    <TextInput style={styles.inputHalf} placeholder={'Zip'} onChangeText={(text) => {setZip( text )}}/> 
                     <TextInput style={styles.inputHalf} placeholder={'Country'} onChangeText={(text) => {setCountry( text )}}/>
                 </View>
             </View>
