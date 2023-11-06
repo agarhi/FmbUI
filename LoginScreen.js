@@ -96,7 +96,7 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate('SignUp')
   }
 
-  useEffect(effectFunction = () => {
+  useEffect(() => {
     isFocused && setError(false)
   }, [isFocused]);
 

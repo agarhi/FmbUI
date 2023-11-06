@@ -139,7 +139,7 @@ const RsvpScreen = ({route, navigation}) => {
     }
   };
 
-  useEffect(effectFunction = () => {
+  useEffect(() => {
     fetchData();
   }, [currMenuPgOffset, postBody]);
 
@@ -239,28 +239,30 @@ const checkboxClicked = () => {
   }
 
   const isFeedbackDisabled = (currMenuObj) => {
-    return isFutureDate((menuItemMap[daySelected]).date) <= 0
+    return isAfterToday((menuItemMap[daySelected]).date)
   }
 
   const isInstructionsDisabled = (currMenuObj) => {
-   return isFutureDate((menuItemMap[daySelected]).date) > 0
+   return isBeforeToday((menuItemMap[daySelected]).date)
+  }
+
+  const isAfterToday = (selectedDate) => {
+    const dateFormat = 'MM-DD-YYYY'
+    var selected_date = Moment(selectedDate).format(dateFormat);
+    var today_date = Moment(new DateObject()).format(dateFormat);
+    return moment(selected_date).isAfter(moment(today_date))
+  }
+
+  const isBeforeToday = (selectedDate) => {
+    const dateFormat = 'MM-DD-YYYY'
+    var selected_date = Moment(selectedDate).format(dateFormat);
+    var today_date = Moment(new DateObject()).format(dateFormat);
+    return moment(selected_date).isBefore(moment(today_date))
   }
 
   const openMenu = () => {}
   const openProfile = () => {
     navigation.navigate("Profile")
-  }
-
-  /*
-  * Returns 0 if passed date is equal to today's date
-  * Positive if passed date is in future
-  * Negative if past
-  */
-  const isFutureDate = (selectedDate) => {
-    const dateFormat = 'MM-DD-YYYY'
-    var selected_date = Moment(selectedDate).format(dateFormat);
-    var today_date = Moment(new DateObject()).format(dateFormat);
-    return (new DateObject(selected_date)) - (new DateObject(today_date))
   }
 
     return (
