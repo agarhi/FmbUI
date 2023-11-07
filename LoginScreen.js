@@ -11,6 +11,8 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [isError, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsgModal, setErrorMsgModal] = useState('');
+  const [isErrorModal, setErrorModal] = useState(false);
   const isFocused = useIsFocused(); // sets to true when screen comes back in focus: https://stackoverflow.com/questions/46504660/refresh-previous-screen-on-goback
   const [its, setIts] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -21,35 +23,39 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleOk = async () => {
-    const requestOptions = {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    };
-
-    const url = "http://10.0.0.121:8080/fmbApi/raza/status/" + its
-    console.log(url)
-    let resp
-    try {
-      resp = await fetch(url, requestOptions)
-    } catch (error) {
-      // TypeError: Failed to fetch
-      console.log('There was an error', error);
+    if(its == '') {
+      setErrorModal(true)
+      setErrorMsgModal('ITS is required')
+    } else {
+      const requestOptions = {
+        method: 'GET',
+      };
+  
+      const url = "http://10.0.0.121:8080/fmbApi/raza/status/" + its
+      console.log(url)
+      let resp
+      try {
+        resp = await fetch(url, requestOptions)
+      } catch (error) {
+        // TypeError: Failed to fetch
+        console.log('There was an error', error);
+      }
+      const data = await resp.json();
+      console.log(data)
+      if (data.requestDate == null) { // When there is no user found, server returns an object with no requestDate
+        // This means you have to register
+        navigation.navigate("SignUp", {
+          its: its
+        })
+      } else if (!data.razaReceived) {
+        // User is registered but raza has not been received
+        Alert.alert("Waiting for raza")
+      } else if (data.razaReceived) {
+        // Ok to login - do nothing?
+        Alert.alert("Proceed to login")
+      }
+      setModalVisible(!modalVisible);
     }
-    const data = await resp.json();
-    console.log(data)
-    if (data.requestDate == null) { // When there is no user found, server returns an object with no requestDate
-      // This means you have to register
-      navigation.navigate("SignUp", {
-        its: its
-      })
-    } else if (!data.razaReceived) {
-      // User is registered but raza has not been received
-      Alert.alert("Waiting for raza")
-    } else if (data.razaReceived) {
-      // Ok to login - do nothing?
-      Alert.alert("Proceed to login")
-    }
-    setModalVisible(!modalVisible);
   };
 
   const handleSubmitPress = async () => {
@@ -143,6 +149,8 @@ const LoginScreen = ({ navigation }) => {
           {
             setError(false)
             setModalVisible(true)
+            setErrorMsgModal('')
+            setErrorModal(false)
           }
           
           }>
@@ -163,6 +171,7 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.modalView}>
               <Text style={styles.modalText}>Enter HOF ITS</Text>
               <TextInput
+                onFocus={() => {setErrorModal(false)}}
                 style={styles.inputModal}
                 placeholder=" ITS"
                 keyboardType="numeric"
@@ -176,6 +185,12 @@ const LoginScreen = ({ navigation }) => {
                   <Text style={{ color: 'white', width: 70, textAlign: 'center' }}>Submit</Text>
                 </TouchableOpacity>
               </View>
+              {
+                isErrorModal ? (<Text style={{color:'red', marginTop:5}}>{errorMsgModal}</Text>) 
+                : 
+                (<View style={{marginTop:20}}/>)
+              }
+              
             </View>
           </View>
         </Modal>
