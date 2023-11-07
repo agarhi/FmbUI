@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, Image, Pressable } from 'react-native';
-import { StyleSheet, TextInput, Alert } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native';
+import alert from './alert'
 
 
 
@@ -16,7 +17,7 @@ const LoginScreen = ({ navigation }) => {
   const isFocused = useIsFocused(); // sets to true when screen comes back in focus: https://stackoverflow.com/questions/46504660/refresh-previous-screen-on-goback
   const [its, setIts] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
+  var base64 = require("base-64");
  
   const handleCancel = () => {
     setModalVisible(false);
@@ -49,33 +50,48 @@ const LoginScreen = ({ navigation }) => {
         })
       } else if (!data.razaReceived) {
         // User is registered but raza has not been received
-        Alert.alert("Waiting for raza")
+        alert("Waiting for raza")
       } else if (data.razaReceived) {
         // Ok to login - do nothing?
-        Alert.alert("Proceed to login")
+        alert("Proceed to login")
       }
       setModalVisible(!modalVisible);
     }
   };
 
-  const handleSubmitPress = async () => {
-    console.log('u ', username)
-    console.log('p ', password)
-    if(username == '' || password == '') {
+  const handleLogin = async () => {
+      if(username == '' || password == '') {
       setError(true)
       setErrorMsg('Invalid credentials')
     } else {
+      var details = {
+        'username': username,
+        'password': password,
+        'grant_type': 'password'
+      };
+    
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ "email": username, "pass": password })
+        headers: { 
+                   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 
+                   'Authorization': 'Basic ' + base64.encode('fooClientId' + ':' + 'secret'), 
+                  },
+                    body: formBody
       };
   
       console.log('username', username);
-      const resp = await fetch('http://sfjamaat.org/sf/faiz/login.php?offset=0&date=', requestOptions);
+      const resp = await fetch('http://10.0.0.121:8080/fmbApi/oauth/token', requestOptions);
       const data = await resp.json();
       const headers = resp.headers;
-      console.log('haider ', headers.get("set-cookie"))
+      console.log('access_token ', data.access_token)
       if (headers.get("set-cookie") == null) {
         setError(true)
         setErrorMsg(data.msg)
@@ -140,7 +156,7 @@ const LoginScreen = ({ navigation }) => {
           />
         </View>
         <View >
-          <TouchableOpacity style={styles.buttonTO} onPress={handleSubmitPress}>
+          <TouchableOpacity style={styles.buttonTO} onPress={handleLogin}>
             <Text style={{ color: 'white', textAlign: 'center', paddingRight:20, paddingLeft:20 }}>Login</Text>
           </TouchableOpacity>
         </View>
@@ -164,7 +180,7 @@ const LoginScreen = ({ navigation }) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            alert('Modal has been closed.');
             setModalVisible(!modalVisible);
           }}>
           <View style={styles.centeredView}>

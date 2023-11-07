@@ -47,7 +47,7 @@ const SignUpScreen = ({route, navigation}) => {
             requestOptions.headers['Accept'] = '*/*'
             requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
             
-            const url = "http://10.0.0.121:8080/fmbApi/user/"
+            const url = "http://10.0.0.121:8080/fmbApi/user"
             let resp
             try {
                 resp = await fetch(url, requestOptions)
@@ -93,7 +93,7 @@ const SignUpScreen = ({route, navigation}) => {
             <View style={styles.columnItem}>
                 <View style={{flex:1,borderWidth:0}}><Text style={styles.textContainer}>Country</Text></View>
                 <View style={{flex:2, alignItems:'left',flexDirection:'row', borderWidth:0}}>
-                    <TextInput style={styles.inputHalf} placeholder={'Zip'} onChangeText={(text) => {setZip( text )}}/> 
+                    <TextInput style={styles.inputHalf} placeholder={'Zip'} keyboardType="numeric" onChangeText={(text) => {setZip( text )}}/> 
                     <TextInput style={styles.inputHalf} placeholder={'Country'} onChangeText={(text) => {setCountry( text )}}/>
                 </View>
             </View>
