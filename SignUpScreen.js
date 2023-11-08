@@ -47,7 +47,7 @@ const SignUpScreen = ({route, navigation}) => {
             requestOptions.headers['Accept'] = '*/*'
             requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
             
-            const url = "http://10.0.0.121:8080/fmbApi/user"
+            const url = "http://10.0.0.121:8080/fmbApi/register"
             let resp
             try {
                 resp = await fetch(url, requestOptions)
