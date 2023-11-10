@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 const LandingTabs = ({route}) => {
-  const { token, message } = route.params;
+  const { welcomeMessage, userId } = route.params;
 
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +29,7 @@ const Tab = createBottomTabNavigator();
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
       })}>
-        <Tab.Screen name="Menu" component={RsvpScreen} options={{headerShown: false}} initialParams={{token:token, message:message}} />
+        <Tab.Screen name="Menu" component={RsvpScreen} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}} />
         <Tab.Screen name="Settings" component={SettingsScreen} options={{headerShown: false}}/>
       </Tab.Navigator>
     

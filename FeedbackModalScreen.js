@@ -49,7 +49,7 @@ const retrieveThaliNumber = async () => {
   const onQualityChange = (item) => {
   }
 
-useEffect(effectFunction = () => {
+  useEffect(() => {
     fetchData();
 }, [openFeedbackModal]); // without openFeedbackModal in here, the fetchData is not called on each load: https://stackoverflow.com/questions/61410617/how-to-fetch-data-only-when-the-modal-loads
 

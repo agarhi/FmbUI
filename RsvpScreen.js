@@ -8,11 +8,13 @@ import Checkbox from 'expo-checkbox';
 import SpInsModalScreen from './SpInstructionScreen'
 import FeedbackModalScreen from './FeedbackModalScreen'
 import moment from "moment";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const RsvpScreen = ({route, navigation}) => {
-    const token = route.params.token
-    const message = route.params.message
+    const welcomeMessage = route.params.welcomeMessage
+    const userId = route.params.userId
+    console.log('welcomeMessage ',welcomeMessage)
     const [open, setOpen] = useState(false);
     const [foodSizeValues, setFoodSizeValues] = useState([
     {label: 'X Small', value: 'XS'},
@@ -48,10 +50,12 @@ const RsvpScreen = ({route, navigation}) => {
   const verticalTabArr = []
 
   const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
+    const token = await AsyncStorage.getItem('token');
+    console.log('token ', token)
     if(!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
       const requestOptions = {
         method: isPostMode ? 'POST' : 'GET',
-        headers: {  'Set-Cookie' : token },
+        headers: { 'Authorization': 'Bearer '+token },
         body: isPostMode ? postBody : null
       };
       if(isPostMode) {
@@ -59,7 +63,7 @@ const RsvpScreen = ({route, navigation}) => {
         requestOptions.headers['Accept'] = '*/*'
         requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
       }
-      const url = "http://sfjamaat.org/sf/faiz/rsvp.php?date=&offset="+currMenuPgOffset
+      const url = "http://10.0.0.121:8080/fmbApi/rsvp/"+userId+"/"+currMenuPgOffset
       console.log('Fetch url ', url)
       console.log('Post mode', isPostMode)
       let detailsData
@@ -75,7 +79,7 @@ const RsvpScreen = ({route, navigation}) => {
           console.log('There was an error', error);
         }
         const data = await resp.json();
-        detailsData = data.data
+        detailsData = data
       }
       
      if(detailsData!=null) {
@@ -93,7 +97,7 @@ const RsvpScreen = ({route, navigation}) => {
         for(let i = 0; i < detailsData.length; i++) {
           let menuDate = detailsData[i].date;
           if(new Date(menuDate) > dateToday) {
-            if(detailsData[i].rsvp!=1) {
+            if(!detailsData[i].rsvp) {
               rsvpAllPayloadMap[menuDate] = rsvpTruStr;
             } else {
               rsvpCancelAllPayloadMap[menuDate] = rsvpFalsStr;
@@ -196,7 +200,7 @@ const checkboxClicked = () => {
   ));
 
   const onRsvpPress = () => {
-    let rsvpValue = currMenuObj.rsvp == 1 ? "false" : "true"
+    let rsvpValue = currMenuObj.rsvp ? "false" : "true"
     console.log('"lessRice":'.concat(lessRiceMap[daySelected]))
     let postBody ='{"'.concat(currMenuObj.date).concat('":{"rsvp":'.concat(rsvpValue).concat(',"lessRice":'.concat(lessRiceMap[daySelected])).concat('}}'));
     console.log("postBody rsvp ", postBody)
@@ -235,7 +239,7 @@ const checkboxClicked = () => {
   }
 
   const isRsvpDisabled = (currMenuObj) => {
-    return currMenuObj.readonly == 1 || currMenuObj.rsvp != 1
+    return currMenuObj.readonly || !currMenuObj.rsvp
   }
 
   const isFeedbackDisabled = (currMenuObj) => {
@@ -286,7 +290,7 @@ const checkboxClicked = () => {
                   </View>
              </View>
              <View style={{flex:0.2, width:'90%', alignSelf:'center', justifyContent:'center', flexDirection:'row'}}>
-               <Text style={{flex:2, fontSize: 16, fontFamily:'Futura', marginLeft:15}}>{message}</Text>
+               <Text style={{flex:2, fontSize: 16, fontFamily:'Futura', marginLeft:15}}>{welcomeMessage}</Text>
                <Text style={{flex:1,fontSize: 14, fontFamily:'Futura', textAlign:'right', marginRight:15}}>{weekInfo}</Text>
              </View>
              <View style={{flexDirection:'row', flex:4.5, width:'90%', alignSelf:'center', marginTop:15}}>
@@ -299,7 +303,7 @@ const checkboxClicked = () => {
                  <View style={{backgroundColor: 'white', flex:5, flexDirection:'column', borderTopRightRadius:15, borderBottomRightRadius:15}}>
                     <View style={{marginTop:20, flex:5, flexDirection:'column', borderWidth:0}}>
                       <View style={{flex:1, borderWidth:0}}>
-                          <Text style={{textAlign:'center', fontWeight: 'bold', fontSize: 18}}>{currMenuObj.details}</Text>
+                          <Text style={{textAlign:'center', fontWeight: 'bold', fontSize: 18}}>{currMenuObj.item}</Text>
                       </View>
                      <View style={{flexDirection:'row', flex:1, alignItems:'center', zIndex:1, alignSelf:'center'}}>
                          <Text style={{ fontSize: 18}}>Size / Count   </Text>
@@ -329,8 +333,8 @@ const checkboxClicked = () => {
                           </View>
                       </View>
                       <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
-                        <TouchableOpacity style={currMenuObj.readonly == 1 ? styles.buttonDisabled : styles.button} onPress={onRsvpPress} disabled={currMenuObj.readonly == 1}>
-                            <Text style={{color:'white'}}>{currMenuObj.rsvp == 1 ? 'Yes' : 'No'}</Text>
+                        <TouchableOpacity style={currMenuObj.readonly ? styles.buttonDisabled : styles.button} onPress={onRsvpPress} disabled={currMenuObj.readonly}>
+                            <Text style={{color:'white'}}>{currMenuObj.rsvp ? 'Yes' : 'No'}</Text>
                         </TouchableOpacity>
                       </View>
                       <View style={{flexDirection:'row', flex:1, alignItems:'center', justifyContent:'center'}}>
@@ -341,8 +345,8 @@ const checkboxClicked = () => {
                       </View>
                       <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={()=> setOpenSpInsModal(false)} daySelected={daySelected}/>
                       <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={()=> setOpenFeedbackModal(false)} 
-                          daySelected={daySelected} menuItem={currMenuObj.details} 
-                          beneficiary={message}/>
+                          daySelected={daySelected} menuItem={currMenuObj.item} 
+                          beneficiary={welcomeMessage}/>
                       <View style={{flexDirection:'row', flex:1}}>
                         <View style={{flex:2, flexDirection:'row', borderWidth:0}}>
                             <TouchableOpacity style={{flexDirection:'row', position:'absolute', right:5}} onPress={() =>{changeMenuWeek(-7)}}>

@@ -4,6 +4,7 @@ import { StyleSheet, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native';
 import alert from './alert'
+import integrate from './integration';
 
 
 
@@ -23,35 +24,21 @@ const LoginScreen = ({ navigation }) => {
     setModalVisible(false);
   };
 
-  const handleOk = async () => {
+  const handleSignUpOk = async () => {
     if(its == '') {
       setErrorModal(true)
       setErrorMsgModal('ITS is required')
     } else {
-      const requestOptions = {
-        method: 'GET',
-      };
-  
-      const url = "http://10.0.0.121:8080/fmbApi/raza/status/" + its
-      console.log(url)
-      let resp
-      try {
-        resp = await fetch(url, requestOptions)
-      } catch (error) {
-        // TypeError: Failed to fetch
-        console.log('There was an error', error);
-      }
-      const data = await resp.json();
-      console.log(data)
-      if (data.requestDate == null) { // When there is no user found, server returns an object with no requestDate
+      const razaResponse = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/raza/status/'+its,null, null)
+      if (razaResponse.requestDate == null) { // When there is no user found, server returns an object with no requestDate
         // This means you have to register
         navigation.navigate("SignUp", {
           its: its
         })
-      } else if (!data.razaReceived) {
+      } else if (!razaResponse.razaReceived) {
         // User is registered but raza has not been received
         alert("Waiting for raza")
-      } else if (data.razaReceived) {
+      } else if (razaResponse.razaReceived) {
         // Ok to login - do nothing?
         alert("Proceed to login")
       }
@@ -91,16 +78,20 @@ const LoginScreen = ({ navigation }) => {
       const resp = await fetch('http://10.0.0.121:8080/fmbApi/oauth/token', requestOptions);
       const data = await resp.json();
       const headers = resp.headers;
-      console.log('access_token ', data.access_token)
-      if (headers.get("set-cookie") == null) {
+      const access_token = data.access_token
+      console.log('access_token ', access_token)
+      if (access_token == null) {
         setError(true)
         setErrorMsg(data.msg)
       } else {
+        storeData('token', access_token)
         setError(false)
-        storeData('thali_num', password)
+        // another fetch call for get user
+        const response = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/user/'+username, {'Authorization': 'Bearer '+access_token}, null)
+        storeData('thali_num', response.thalinum)
         navigation.navigate('LandingTabs', {
-          token: headers.get("set-cookie"),
-          message: data.data
+          welcomeMessage: response.fname + " " + response.lname + ', #'+response.thalinum,
+          userId: response.id
         });
       }
     }
@@ -197,7 +188,7 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity style={styles.buttonTO} onPress={() => setModalVisible(!modalVisible)}>
                   <Text style={{ color: 'white', width: 70, textAlign: 'center' }}>Close</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonTO} onPress={handleOk}>
+                <TouchableOpacity style={styles.buttonTO} onPress={handleSignUpOk}>
                   <Text style={{ color: 'white', width: 70, textAlign: 'center' }}>Submit</Text>
                 </TouchableOpacity>
               </View>
