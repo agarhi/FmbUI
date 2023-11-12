@@ -12,8 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const PlayGround = ({ route, navigation }) => {
-    const welcomeMessage = 'Maad Garhi, #53'
-    const userId = 1
+    const welcomeMessage = route.params.welcomeMessage
+    const userId = route.params.userId
     console.log('welcomeMessage ', welcomeMessage)
     const [open, setOpen] = useState(false);
     const [foodSizeValues, setFoodSizeValues] = useState([
@@ -158,9 +158,9 @@ const PlayGround = ({ route, navigation }) => {
     // Change the color of menu tab user taps on
     const changeMenuDay = (buttonInfo, index, isNextNav) => (e) => {
         if (isNextNav && index >= buttonData.length) {
-            changeMenuWeek(7)
+            changeMenuWeek(1)
         } else if (isNextNav && index == -1) {
-            changeMenuWeek(-7)
+            changeMenuWeek(-1)
         }
         else {
             let newArrray = [] // You have to create a new object and set it for react to re-render
@@ -170,7 +170,7 @@ const PlayGround = ({ route, navigation }) => {
             }
             newArrray[index].color = 'white'
             setCurrMenuObj(menuItemMap[newArrray[index].text])
-            setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].menuRsvp.size)
+            setFoodSizeValue(menuItemMap[newArrray[index].text].menuRsvp.size)
             setButtonData(newArrray);
             setUserIdxChoice(index);
             setDaySelected(newArrray[index].text)
@@ -365,14 +365,14 @@ const PlayGround = ({ route, navigation }) => {
                                     beneficiary={welcomeMessage} />
                                 <View style={{ flexDirection: 'row', flex: 1 }}>
                                     <View style={{ flex: 2, flexDirection: 'row', borderWidth: 0 }}>
-                                        <TouchableOpacity style={{ flexDirection: 'row', position: 'absolute', right: 5 }} onPress={() => { changeMenuWeek(-7) }}>
+                                        <TouchableOpacity style={{ flexDirection: 'row', position: 'absolute', right: 5 }} onPress={() => { changeMenuWeek(-1) }}>
                                             <Icon style={{ borderWidth: 0 }} name="arrow-left" size={20} />
                                             <Text style={styles.nextPrev}>Prev week</Text>
                                         </TouchableOpacity>
                                     </View>
                                     <View style={{ flex: 1 }}></View>
                                     <View style={{ flex: 2 }}>
-                                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { changeMenuWeek(7) }}>
+                                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { changeMenuWeek(1) }}>
                                             <Text style={styles.nextPrev}>Next week</Text>
                                             <Icon name="arrow-right" size={20} />
                                         </TouchableOpacity>
