@@ -47,8 +47,6 @@ const PlayGround = ({ route, navigation }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [dataCache, setDataCache] = useState({});
 
-    const verticalTabArr = []
-
     const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
         const token = await AsyncStorage.getItem('token');
         console.log('token ', token)
@@ -94,6 +92,7 @@ const PlayGround = ({ route, navigation }) => {
                 setCurrentMonth(Moment(detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
                 let rsvpTruStr = { "rsvp": true };
                 let rsvpFalsStr = { "rsvp": false };
+                let verticalTabArr = []
                 for (let i = 0; i < detailsData.length; i++) {
                     let menuDate = detailsData[i].date;
                     if (new Date(menuDate) > dateToday) {
