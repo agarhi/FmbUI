@@ -88,7 +88,7 @@ const LoginScreen = ({ navigation }) => {
         setError(false)
         // another fetch call for get user
         const response = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/user/'+username, {'Authorization': 'Bearer '+access_token}, null)
-        storeData('thali_num', response.thalinum)
+        storeData('thali_num', response.thalinum+'') // since Asynchsotrage works bette with strings
         navigation.navigate('LandingTabs', {
           welcomeMessage: response.fname + " " + response.lname + ', #'+response.thalinum,
           userId: response.id

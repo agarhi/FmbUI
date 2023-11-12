@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Platform } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useState, useEffect } from 'react';
 import Moment from 'moment';
@@ -127,7 +127,7 @@ const RsvpScreen = ({ route, navigation }) => {
         // Just setting a bunch of state variables based on data received
         let idx = isPostMode ? userIdxChoice : currentDayIdx
         setUserIdxChoice(idx)
-        verticalTabArr[idx].color = 'white'; // default day 
+        verticalTabArr[idx].color = Platform.OS === 'web' ? '#9bedff' :'white'; // default day 
         setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
         console.log('currMenuObj ',menuItemMap[verticalTabArr[idx].text])
         console.log('foodSizeValue ', menuItemMap[verticalTabArr[idx].text].menuRsvp.size)
@@ -256,14 +256,14 @@ const RsvpScreen = ({ route, navigation }) => {
   }
 
   const isAfterToday = (selectedDate) => {
-    const dateFormat = 'MM-DD-YYYY'
+    const dateFormat = 'YYYY-MM-DD'
     var selected_date = Moment(selectedDate).format(dateFormat);
     var today_date = Moment(new DateObject()).format(dateFormat);
     return moment(selected_date).isAfter(moment(today_date))
   }
 
   const isBeforeToday = (selectedDate) => {
-    const dateFormat = 'MM-DD-YYYY'
+    const dateFormat = 'YYYY-MM-DD'
     var selected_date = Moment(selectedDate).format(dateFormat);
     var today_date = Moment(new DateObject()).format(dateFormat);
     return moment(selected_date).isBefore(moment(today_date))
@@ -305,7 +305,7 @@ const RsvpScreen = ({ route, navigation }) => {
               </View>
               {buttonsListArr}
             </View>
-            <View style={{ backgroundColor: 'white', flex: 5, flexDirection: 'column', borderTopRightRadius: 15, borderBottomRightRadius: 15 }}>
+            <View style={{ backgroundColor: 'white', flex: 5, flexDirection: 'column', borderTopRightRadius: 15, borderBottomRightRadius: 15, borderWidth: 0 }}>
               <View style={{ marginTop: 20, flex: 5, flexDirection: 'column', borderWidth: 0 }}>
                 <View style={{ flex: 1, borderWidth: 0 }}>
                   <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>{currMenuObj.menuRsvp.menu.item}</Text>

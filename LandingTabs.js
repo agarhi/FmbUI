@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Image, StyleSheet} from "react-native";
 import RsvpScreen  from './RsvpScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import PlayGround from './PlayGround'
 
 
 const LandingTabs = ({route}) => {
@@ -30,7 +31,7 @@ const Tab = createBottomTabNavigator();
         tabBarInactiveTintColor: 'gray',
       })}>
         <Tab.Screen name="Menu" component={RsvpScreen} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}} />
-        <Tab.Screen name="Settings" component={SettingsScreen} options={{headerShown: false}}/>
+        <Tab.Screen name="Settings" component={PlayGround} options={{headerShown: false}}/>
       </Tab.Navigator>
     
   );
