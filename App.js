@@ -25,7 +25,10 @@ const Stack = createStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{
+            headerStyle: { elevation: 0 },
+            cardStyle: { backgroundColor: '#ecf0f1' }
+        }}>
         <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
         <Stack.Screen name="LandingTabs" options={({ route }) => ({
             headerTitle: getHeaderTitle(route),

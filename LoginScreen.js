@@ -171,7 +171,6 @@ const LoginScreen = ({ navigation }) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            alert('Modal has been closed.');
             setModalVisible(!modalVisible);
           }}>
           <View style={styles.centeredView}>
@@ -212,7 +211,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderWidth: 0,
     justifyContent:'space-between',
-    marginTop:100
+    marginTop:100,
   },
   logincontainer: {
     alignItems: 'center',
