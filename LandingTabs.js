@@ -12,7 +12,9 @@ const LandingTabs = ({route}) => {
 const Tab = createBottomTabNavigator();
 
   return (
-      <Tab.Navigator screenOptions={({ route }) => ({
+      <Tab.Navigator 
+        sceneContainerStyle={{backgroundColor: '#ecf0f1'}}
+        screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
