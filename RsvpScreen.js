@@ -25,15 +25,13 @@ const RsvpScreen = ({ route, navigation }) => {
         { label: 'X Large', value: 'XL' }
     ]);
 
-    const [loading, setLoading] = useState(true);
     const [menuItemMap, setmenuItemMap] = useState({});
-    const [backgroundColor, setBackgroundColor] = useState('#006400');
     const [currentMonth, setCurrentMonth] = useState('');
     const [currMenuObj, setCurrMenuObj] = useState('')
-    const [isLessCarbsSelected, setLessCarbsSelection] = useState(true);
     const [currMenuPgOffset, setCurrMenuPgOffset] = useState(0)
     const [reverseMenuPgOffset, setReverseCurrMenuPgOffset] = useState(0)
     const [isPostMode, setPostMode] = useState(false)
+    const [postModeUrl, setPostModeUrl] = useState('')
     const [postBody, setPostBody] = useState(null)
     const [userIdxChoice, setUserIdxChoice] = useState(0)
     const [daySelected, setDaySelected] = useState();
@@ -53,7 +51,7 @@ const RsvpScreen = ({ route, navigation }) => {
         console.log('token ', token)
         if (!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
             let method = isPostMode ? 'PUT': 'GET'
-            let url = isPostMode ? "http://localhost:8080/fmbApi/rsvp" : "http://10.0.0.121:8080/fmbApi/rsvp/" + userId + "/" + currMenuPgOffset
+            let url = isPostMode ? postModeUrl : "http://10.0.0.121:8080/fmbApi/rsvp/" + userId + "/" + currMenuPgOffset
             let body = isPostMode ? postBody : null
             let headers = { 'Authorization': 'Bearer ' + token }
             if(isPostMode) {
@@ -67,7 +65,7 @@ const RsvpScreen = ({ route, navigation }) => {
                 console.log('Fetched from cache')
             } else {
                 try {
-                    detailsData = await integrate(method, url, headers,body)  
+                    detailsData = await integrate(method, url, headers, body)  
                 } catch (error) {
                     // TypeError: Failed to fetch
                     console.log('There was an error', error);
@@ -105,7 +103,7 @@ const RsvpScreen = ({ route, navigation }) => {
 
                     // menuItemMap is a dictionary that uses dates as keys and full menu object as values
                     menuItemMap[dayDtDt] = detailsData[i];
-                    lessRiceMap[dayDtDt] = detailsData[i].lessRice == 1 ? true : false;
+                    lessRiceMap[dayDtDt] = detailsData[i].menuRsvp.lessCarbs;
                     // start forming the vertical tab array 
                     let topRadius = 0, bottomRadius = 0;
                     if (i == detailsData.length - 1) {
@@ -181,14 +179,6 @@ const RsvpScreen = ({ route, navigation }) => {
         setNoDataForTheWeek(false)
     }
 
-    const checkboxClicked = () => {
-        let postBody = '{"'.concat(currMenuObj.date).concat('":{"lessRice":'.concat(!lessRiceMap[daySelected])).concat('}}');
-        console.log("postBody lessRice ", postBody)
-        setPostBody(postBody)
-        setPostMode(true)
-        setIsLoading(true)
-    }
-
     const buttonsListArr = buttonData.map((buttonInfo, index) =>
     (
         <TouchableOpacity style={{
@@ -208,6 +198,7 @@ const RsvpScreen = ({ route, navigation }) => {
         setRsvpCancelAllPayloadMap([])
         setPostBody(postBody)
         setPostMode(true)
+        setPostModeUrl("http://localhost:8080/fmbApi/rsvp")
         setIsLoading(true)
     }
 
@@ -217,6 +208,7 @@ const RsvpScreen = ({ route, navigation }) => {
         console.log('rsvp all body ', postBodyRsvpAll)
         setPostBody(postBodyRsvpAll)
         setPostMode(true)
+        setPostModeUrl("http://localhost:8080/fmbApi/rsvp")
         setIsLoading(true)
         setRsvpAllPayloadMap([])
     }
@@ -227,21 +219,39 @@ const RsvpScreen = ({ route, navigation }) => {
         console.log('rsvp all body ', postBodyRsvpAll)
         setPostBody(postBodyRsvpAll)
         setPostMode(true)
+        setPostModeUrl("http://localhost:8080/fmbApi/rsvp")
         setIsLoading(true)
         setRsvpCancelAllPayloadMap([])
     }
 
     const onSizeChangeRsvp = (item) => {
-        console.log("v ", item.value)
-        let postBody = '{"'.concat(currMenuObj.date).concat('":{"size":"'.concat(item.value).concat('"}}'));
-        console.log("pppppppppostBody size ", postBody)
-        setPostBody(postBody)
+        let postBodySizeChange = '{"userId":'+userId+',"menuId":'+currMenuObj.menuRsvp.menu.id+', "offset":'+currMenuPgOffset+',"size":"'+item.value+'"}';
+        console.log("pppppppppostBody size ", postBodySizeChange)
+        setPostBody(postBodySizeChange)
         setPostMode(true)
+        setPostModeUrl("http://localhost:8080/fmbApi/rsvp/size")
         setIsLoading(true)
     }
 
+    const onCarbsChangeRsvp = () => {
+      let postBodyCarbsChange = '{"userId":'+userId+',"menuId":'+currMenuObj.menuRsvp.menu.id+', "offset":'+currMenuPgOffset+',"lessCarbsChoice":'+!lessRiceMap[daySelected]+'}';
+      console.log("postBody lessRice ", postBodyCarbsChange)
+      setPostBody(postBodyCarbsChange)
+      setPostMode(true)
+      setPostModeUrl("http://localhost:8080/fmbApi/rsvp/carbs")
+      setIsLoading(true)
+  }
+
     const isRsvpDisabled = (currMenuObj) => {
         return currMenuObj.menuRsvp.menu.readonly || !currMenuObj.rsvp
+    }
+
+    const isFormInteractionEnabled = (currMenuObj) => {
+      return isRsvpAllowedForDate(currMenuObj) && currMenuObj.rsvp
+    }
+
+    const isRsvpAllowedForDate = (currMenuObj) => {
+      return isAfterToday(currMenuObj.date)
     }
 
     const isFeedbackDisabled = (currMenuObj) => {
@@ -314,7 +324,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                 <View style={{ flex: 1, borderWidth: 0 }}>
                                     <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>{currMenuObj.menuRsvp.menu.item}</Text>
                                 </View>
-                                <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', zIndex: 1, alignSelf: 'center' }}>
+                                <View style={!isFormInteractionEnabled(currMenuObj) ? styles.dropDisabled : styles.drop}>
                                     <Text style={{ fontSize: 18 }}>Size / Count   </Text>
                                     <DropDownPicker placeholder='Size' containerStyle={{ width: 100 }} style={{ zIndex: 999 }}
                                         open={open} value={foodSizeValue}
@@ -322,7 +332,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                         setItems={setFoodSizeValues}
                                         onSelectItem={(value) => {
                                             onSizeChangeRsvp(value)
-                                        }} disabled={isRsvpDisabled(currMenuObj)}
+                                        }} disabled={!isFormInteractionEnabled(currMenuObj)}
                                     />
                                 </View>
                                 <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -331,8 +341,8 @@ const RsvpScreen = ({ route, navigation }) => {
                                             <Icon style={{ borderWidth: 0 }} name="arrow-left" color="#2b4257" size={28} />
                                         </TouchableOpacity>
                                     </View>
-                                    <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 0 }}>
-                                        <Checkbox disabled={isRsvpDisabled(currMenuObj)} value={lessRiceMap[daySelected]} onValueChange={checkboxClicked} />
+                                    <View style={!isFormInteractionEnabled(currMenuObj) ? styles.checkDisabled : styles.check}>
+                                        <Checkbox disabled={!isFormInteractionEnabled(currMenuObj)} value={lessRiceMap[daySelected]} onValueChange={onCarbsChangeRsvp} />
                                         <Text style={{ textAlign: 'center', fontSize: 18 }}>   No rice / bread</Text>
                                     </View>
                                     <View style={{ flex: 1, borderWidth: 0 }}>
@@ -342,7 +352,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                    <TouchableOpacity style={currMenuObj.readonly ? styles.buttonDisabled : styles.button} onPress={onRsvpPress} disabled={currMenuObj.readonly}>
+                                    <TouchableOpacity style={!isRsvpAllowedForDate(currMenuObj) ? styles.buttonDisabled : styles.button} onPress={onRsvpPress} disabled={!isRsvpAllowedForDate(currMenuObj)}>
                                         <Text style={{ color: 'white' }}>{currMenuObj.rsvp ? 'Yes' : 'No'}</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -489,7 +499,11 @@ var styles = StyleSheet.create({
         top: 10,
         right: 20
     },
-    nextPrev: { borderWidth: 0, marginTop: 2, fontWeight: 'bold', color: '#2b4257' }
+    nextPrev: { borderWidth: 0, marginTop: 2, fontWeight: 'bold', color: '#2b4257' },
+    check: {flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 0 },
+    checkDisabled : {flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 0, opacity:0.5 },
+    drop : {flexDirection: 'row', flex: 1, alignItems: 'center', zIndex: 1, alignSelf: 'center'},
+    dropDisabled : {flexDirection: 'row', flex: 1, alignItems: 'center', zIndex: 1, alignSelf: 'center', opacity:0.5},
 });
 
 export default RsvpScreen;
