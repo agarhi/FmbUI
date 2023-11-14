@@ -326,7 +326,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                 </View>
                                 <View style={!isFormInteractionEnabled(currMenuObj) ? styles.dropDisabled : styles.drop}>
                                     <Text style={{ fontSize: 18 }}>Size / Count   </Text>
-                                    <DropDownPicker placeholder='Size' containerStyle={{ width: 100 }} style={{ zIndex: 999 }}
+                                    <DropDownPicker placeholder='Size' containerStyle={{ width: 120 }} style={{ zIndex: 999 }}
                                         open={open} value={foodSizeValue}
                                         items={foodSizeValues} setOpen={setOpen} setValue={setFoodSizeValue}
                                         setItems={setFoodSizeValues}
