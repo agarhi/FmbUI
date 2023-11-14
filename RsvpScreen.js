@@ -213,21 +213,22 @@ const RsvpScreen = ({ route, navigation }) => {
 
     const onRsvpAll = () => {
         let menuIds = '['+rsvpAllPayloadMap.toString()+']'
-        let postBodyRsvpAll = '{"userId":'+userId+',"menuIds":'+menuIds+', "offset":'+currMenuPgOffset+',"choice":'+!currMenuObj.rsvp+'}';
+        let postBodyRsvpAll = '{"userId":'+userId+',"menuIds":'+menuIds+', "offset":'+currMenuPgOffset+',"choice":true}';
         console.log('rsvp all body ', postBodyRsvpAll)
         setPostBody(postBodyRsvpAll)
         setPostMode(true)
         setIsLoading(true)
-        setRsvpAllPayloadMap({})
+        setRsvpAllPayloadMap([])
     }
 
     const onRsvpCancelAll = () => {
-        console.log('rsvpCancelAllPayloadMap body ', rsvpCancelAllPayloadMap)
-        let tempStr = rsvpCancelAllPayloadMap
-        setPostBody(JSON.stringify(tempStr))
+      let menuIds = '['+rsvpCancelAllPayloadMap.toString()+']'
+      let postBodyRsvpAll = '{"userId":'+userId+',"menuIds":'+menuIds+', "offset":'+currMenuPgOffset+',"choice":false}';
+        console.log('rsvp all body ', postBodyRsvpAll)
+        setPostBody(postBodyRsvpAll)
         setPostMode(true)
         setIsLoading(true)
-        setRsvpCancelAllPayloadMap({})
+        setRsvpCancelAllPayloadMap([])
     }
 
     const onSizeChangeRsvp = (item) => {
