@@ -89,7 +89,7 @@ const RsvpScreen = ({ route, navigation }) => {
                 let verticalTabArr = []
                 for (let i = 0; i < detailsData.length; i++) {
                     let menuDate = detailsData[i].date;
-                    if (new Date(menuDate) > dateToday) {
+                    if (isAfterToday(menuDate)) {
                         if (!detailsData[i].rsvp) {
                             rsvpAllPayloadMap.push(detailsData[i].menuRsvp.menu.id);
                         } else {
