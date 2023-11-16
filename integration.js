@@ -1,6 +1,8 @@
 const integrate = async (method, url, headers, body) => {
     const requestOptions = {
-      method: method
+      method: method,
+      credentials: 'include',
+      withCredentials: true
     }
 
     if(headers!=null) {
@@ -11,7 +13,7 @@ const integrate = async (method, url, headers, body) => {
       requestOptions.body = body
     }
 
-    console.log(requestOptions)
+    console.log('Executing '+ method + ' ' + url)
     let resp
     try {
         resp = await fetch(url, requestOptions)
@@ -19,7 +21,8 @@ const integrate = async (method, url, headers, body) => {
         console.log('There was an error', error);
       }
       const response = await resp.json();
-      console.log('response ',response)
+      console.log('response ',resp.headers.get("Set-Cookie"))
+      resp.headers.forEach(console.log);
       return response;
 
 }

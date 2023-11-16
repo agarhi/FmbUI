@@ -51,7 +51,7 @@ const RsvpScreen = ({ route, navigation }) => {
         console.log('token ', token)
         if (!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
             let method = isPostMode ? 'PUT': 'GET'
-            let url = isPostMode ? postModeUrl : "http://10.0.0.121:8080/fmbApi/rsvp/" + userId + "/" + currMenuPgOffset
+            let url = isPostMode ? postModeUrl : "http://10.0.0.121:8080/fmbApi/rsvp/"  + currMenuPgOffset
             let body = isPostMode ? postBody : null
             let headers = { 'Authorization': 'Bearer ' + token }
             if(isPostMode) {
@@ -198,7 +198,7 @@ const RsvpScreen = ({ route, navigation }) => {
         setRsvpCancelAllPayloadMap([])
         setPostBody(postBody)
         setPostMode(true)
-        setPostModeUrl("http://localhost:8080/fmbApi/rsvp")
+        setPostModeUrl("http://10.0.0.121:8080/fmbApi/rsvp")
         setIsLoading(true)
     }
 
@@ -208,7 +208,7 @@ const RsvpScreen = ({ route, navigation }) => {
         console.log('rsvp all body ', postBodyRsvpAll)
         setPostBody(postBodyRsvpAll)
         setPostMode(true)
-        setPostModeUrl("http://localhost:8080/fmbApi/rsvp")
+        setPostModeUrl("http://10.0.0.121:8080/fmbApi/rsvp")
         setIsLoading(true)
         setRsvpAllPayloadMap([])
     }
@@ -219,7 +219,7 @@ const RsvpScreen = ({ route, navigation }) => {
         console.log('rsvp all body ', postBodyRsvpAll)
         setPostBody(postBodyRsvpAll)
         setPostMode(true)
-        setPostModeUrl("http://localhost:8080/fmbApi/rsvp")
+        setPostModeUrl("http://10.0.0.121:8080/fmbApi/rsvp")
         setIsLoading(true)
         setRsvpCancelAllPayloadMap([])
     }
@@ -229,7 +229,7 @@ const RsvpScreen = ({ route, navigation }) => {
         console.log("pppppppppostBody size ", postBodySizeChange)
         setPostBody(postBodySizeChange)
         setPostMode(true)
-        setPostModeUrl("http://localhost:8080/fmbApi/rsvp/size")
+        setPostModeUrl("http://10.0.0.121:8080/fmbApi/rsvp/size")
         setIsLoading(true)
     }
 
@@ -238,7 +238,7 @@ const RsvpScreen = ({ route, navigation }) => {
       console.log("postBody lessRice ", postBodyCarbsChange)
       setPostBody(postBodyCarbsChange)
       setPostMode(true)
-      setPostModeUrl("http://localhost:8080/fmbApi/rsvp/carbs")
+      setPostModeUrl("http://10.0.0.121:8080/fmbApi/rsvp/carbs")
       setIsLoading(true)
   }
 
