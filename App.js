@@ -6,6 +6,7 @@ import LoginScreen from './LoginScreen'
 import LandingTabs from './LandingTabs'
 import ProfileScreen from './ProfileScreen'
 import SignUpScreen from './SignUpScreen'
+import SetMenuScreen from './SetMenu'
 
 function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
   // If the focused route is not found, we need to assume it's the initial screen
@@ -36,6 +37,7 @@ function App() {
           })} component={LandingTabs} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="SetMenu" component={SetMenuScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

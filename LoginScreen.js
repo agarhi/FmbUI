@@ -29,7 +29,7 @@ const LoginScreen = ({ navigation }) => {
       setErrorModal(true)
       setErrorMsgModal('ITS is required')
     } else {
-      const razaResponse = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/raza/status/'+its,null, null)
+      const razaResponse = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/raza/status/'+its,null, null, false)
       if (razaResponse.requestDate == null) { // When there is no user found, server returns an object with no requestDate
         // This means you have to register
         navigation.navigate("SignUp", {
@@ -87,7 +87,7 @@ const LoginScreen = ({ navigation }) => {
         storeData('token', access_token)
         setError(false)
         // another fetch call for get user
-        const response = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/user/'+username, {'Authorization': 'Bearer '+access_token}, null)
+        const response = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/user/'+username, {'Authorization': 'Bearer '+access_token}, null, true)
         storeData('thali_num', response.thalinum+'') // since Asynchsotrage works bette with strings
         navigation.navigate('LandingTabs', {
           welcomeMessage: response.fname + " " + response.lname + ', #'+response.thalinum,

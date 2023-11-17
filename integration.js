@@ -1,12 +1,20 @@
-const integrate = async (method, url, headers, body) => {
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+const integrate = async (method, url, headers, body, authorizationRequired) => {
     const requestOptions = {
       method: method,
-      credentials: 'include',
+      credentials: 'include', // Sends Set-Cookie's Cookie in all further request by default
       withCredentials: true
     }
-
+    
     if(headers!=null) {
       requestOptions.headers = headers
+    }
+
+    if(authorizationRequired) {
+      if(requestOptions.headers == null)
+        requestOptions.headers = {}
+      requestOptions.headers['Authorization'] = 'Bearer ' + await AsyncStorage.getItem('token') 
     }
 
     if(body!=null) {
@@ -21,8 +29,6 @@ const integrate = async (method, url, headers, body) => {
         console.log('There was an error', error);
       }
       const response = await resp.json();
-      console.log('response ',resp.headers.get("Set-Cookie"))
-      resp.headers.forEach(console.log);
       return response;
 
 }

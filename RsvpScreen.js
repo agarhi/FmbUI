@@ -8,7 +8,6 @@ import Checkbox from 'expo-checkbox';
 import SpInsModalScreen from './SpInstructionScreen'
 import FeedbackModalScreen from './FeedbackModalScreen'
 import moment from "moment";
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import integrate from './integration';
 
 
@@ -47,13 +46,11 @@ const RsvpScreen = ({ route, navigation }) => {
     const [dataCache, setDataCache] = useState({});
 
     const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
-        const token = await AsyncStorage.getItem('token');
-        console.log('token ', token)
         if (!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
             let method = isPostMode ? 'PUT': 'GET'
             let url = isPostMode ? postModeUrl : "http://10.0.0.121:8080/fmbApi/rsvp/"  + currMenuPgOffset
             let body = isPostMode ? postBody : null
-            let headers = { 'Authorization': 'Bearer ' + token }
+            let headers = {}
             if(isPostMode) {
                 headers['Content-Type'] = 'application/json'
             }
@@ -65,7 +62,7 @@ const RsvpScreen = ({ route, navigation }) => {
                 console.log('Fetched from cache')
             } else {
                 try {
-                    detailsData = await integrate(method, url, headers, body)  
+                    detailsData = await integrate(method, url, headers, body, true)  
                 } catch (error) {
                     // TypeError: Failed to fetch
                     console.log('There was an error', error);
