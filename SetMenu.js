@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, CheckBox } from "react-native";
 import { useState, useEffect } from 'react';
+import Moment from 'moment';
 
 
 const SetMenuScreen = ({ route, navigation }) => {
@@ -9,12 +10,17 @@ const SetMenuScreen = ({ route, navigation }) => {
         navigation.goBack(null);
     }
 
+    const dayOf= (date) => {
+        return Moment(date).format('ddd');
+    }
+
     const dataListArr = menuData.map((menuDataInfo, index) =>
     (
         <View style={styles.data} key={index}>
-            <Text style={styles.date}>{menuDataInfo.date}</Text>
-            <TextInput style={styles.text} value={menuDataInfo.item}></TextInput>
-            <CheckBox style={styles.check} disabled={false} onValueChange={setNiyaz} value={menuDataInfo.niyaz} />
+            <View style={styles.date}><Text >{menuDataInfo.date}, {dayOf(menuDataInfo.date)}</Text></View>
+            <View style={styles.text}><TextInput value={menuDataInfo.item}></TextInput></View>
+            <View style={styles.check}><CheckBox disabled={false} onValueChange={setNiyaz} value={menuDataInfo.niyaz} /></View>
+            
         </View>
     ));
 
@@ -22,9 +28,9 @@ const SetMenuScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <Text style={styles.header}>Set Menu</Text>
             <View style={styles.data}>
-                <Text style={styles.dateBold}>Date</Text>
-                <Text style={styles.textBold}>Item</Text>
-                <Text style={styles.checkBold}>Niyaz</Text>
+                <View style={styles.date}><Text style={styles.header}>Date</Text></View>
+                <View style={styles.textCenter} ><Text style={styles.header}>Item</Text></View>
+                <View style={styles.check}><Text style={styles.header}>Niyaz</Text></View>
             </View>
             {dataListArr}
             <View style={{flexDirection: 'row', borderWidth: 0, justifyContent: 'center', marginTop:10 }}>
@@ -49,7 +55,8 @@ const styles = StyleSheet.create({
         padding:20,
         borderRadius:10,
         justifyContent:'center',
-        marginBottom:30
+        marginBottom:30,
+        width:'60%',
     },
     data: {
         flexDirection:'row',
@@ -57,7 +64,6 @@ const styles = StyleSheet.create({
         width:'100%',
         borderWidth:0
     },
-    
     header: {
         fontWeight:'bold'
     },
@@ -69,9 +75,9 @@ const styles = StyleSheet.create({
       },
     date : {
         alignSelf:'center',
+        flex:2,
         borderWidth:0,
-        flex:5,
-        borderWidth:0
+        alignItems:'left'
     },
     text: {
         borderWidth:1,
@@ -79,26 +85,19 @@ const styles = StyleSheet.create({
         marginLeft:10,
         height:40,
         paddingLeft:5,
-        flex:11,
+        paddingTop:5,
+        flex:4
     },
-      check: {flex:1, alignSelf:'center', marginLeft:20 },
-      dateBold : {
-        alignSelf:'center',
-        borderWidth:0,
-        flex:5,
-        borderWidth:0,
-        fontWeight:'bold'
-    },
-    textBold: {
+    textCenter: {
         borderWidth:0,
         width:200,
         marginLeft:10,
-        height:40,
+        height:20,
         paddingLeft:5,
-        flex:11,
-        fontWeight:'bold'
+        flex:4,
+        alignItems:'center',
     },
-      checkBold: {flex:1, alignSelf:'center', marginLeft:20,fontWeight:'bold' }
+      check: {flex:2, alignSelf:'center', marginLeft:20, borderWidth:0, alignItems:'center' }
 });
 
 
