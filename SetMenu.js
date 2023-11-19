@@ -1,11 +1,33 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, CheckBox } from "react-native";
 import { useState, useEffect } from 'react';
 import Moment from 'moment';
+import integrate from './integration';
 
 
 const SetMenuScreen = ({ route, navigation }) => {
+    
     const [niyaz, setNiyaz] = useState(false);
     const menuData = route.params.menuData;
+    const [menuDate, setMenuDate] = useState(route.params.menuDate);
+    const [menuDataLocal, setMenuDataLocal] = useState([])
+
+    const fetchData = async () => {
+        let resp;
+        try {
+            resp = await integrate('GET', 'http://localhost:8080/fmbApi/menu/'+menuDate, null, null, true)  
+            console.log('resp ', resp)
+          } catch (error) {
+              // TypeError: Failed to fetch
+              console.log('There was an error', error);
+          }
+          setMenuDataLocal(resp)
+    }
+
+    useEffect(() => {
+       console.log('menuDate ', menuDate)
+       fetchData()
+    }, [menuDate]);
+
     const goBack = () => {
         navigation.goBack(null);
     }
@@ -14,7 +36,7 @@ const SetMenuScreen = ({ route, navigation }) => {
         return Moment(date).format('ddd');
     }
 
-    const dataListArr = menuData.map((menuDataInfo, index) =>
+    const dataListArr = menuDataLocal.map((menuDataInfo, index) =>
     (
         <View style={styles.data} key={index}>
             <View style={styles.date}><Text >{menuDataInfo.date}, {dayOf(menuDataInfo.date)}</Text></View>
