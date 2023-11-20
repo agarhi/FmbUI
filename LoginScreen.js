@@ -91,7 +91,8 @@ const LoginScreen = ({ navigation }) => {
         storeData('thali_num', response.thalinum+'') // since Asynchsotrage works bette with strings
         navigation.navigate('LandingTabs', {
           welcomeMessage: response.fname + " " + response.lname + ', #'+response.thalinum,
-          userId: response.id
+          userId: response.id,
+          isAdmin: response.credentials.role === 'ADMIN'
         });
       }
     }

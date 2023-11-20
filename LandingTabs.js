@@ -7,7 +7,7 @@ import PlayGround from './PlayGround'
 
 
 const LandingTabs = ({route}) => {
-  const { welcomeMessage, userId } = route.params;
+  const { welcomeMessage, userId, isAdmin } = route.params;
 
 const Tab = createBottomTabNavigator();
 
@@ -33,7 +33,7 @@ const Tab = createBottomTabNavigator();
         tabBarInactiveTintColor: 'gray',
       })}>
         <Tab.Screen name="Menu" component={RsvpScreen} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}} />
-        <Tab.Screen name="Settings" component={PlayGround} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}}/>
+        {isAdmin ? (<Tab.Screen name="Settings" component={PlayGround} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}}/>) : (null)}
       </Tab.Navigator>
     
   );
