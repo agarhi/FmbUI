@@ -14,11 +14,12 @@ const integrate = async (method, url, headers, body, authorizationRequired) => {
     if(authorizationRequired) {
       if(requestOptions.headers == null)
         requestOptions.headers = {}
-      requestOptions.headers['Authorization'] = 'Bearer ' + await AsyncStorage.getItem('token') 
+        requestOptions.headers['Authorization'] = 'Bearer ' + await AsyncStorage.getItem('token') 
     }
 
     if(body!=null) {
       requestOptions.body = body
+      requestOptions.headers['Content-Type'] = 'application/json'
     }
 
     console.log('Executing '+ method + ' ' + url)

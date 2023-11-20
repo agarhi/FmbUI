@@ -15,6 +15,7 @@ const PlayGround = ({ navigation }) => {
   const [niyaz, setNiyaz] = useState(false);
   const date = new Date()
   const [currDate, setCurrDate] = useState(date);
+  const [result, setResult] = useState('')
 
   const onDismiss = React.useCallback(() => {
     setVisible(false)
@@ -39,31 +40,57 @@ const PlayGround = ({ navigation }) => {
     var selected_date = Moment(date).format(dateFormat);
     let resp;
     try {
-      resp = await integrate('GET', 'http://localhost:8080/fmbApi/menu/' + selected_date, null, null, true)
+      resp = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/menu/' + selected_date, null, null, true)
       console.log('resp ', resp)
     } catch (error) {
       // TypeError: Failed to fetch
       console.log('There was an error', error);
     }
+    console.log(resp)
     setMenuDataLocal(resp)
-    /* navigation.navigate('SetMenu', {
-       menuDate: selected_date
-     }) */
     setDataAvailable(true)
+    setResult('')
   }
-
-  
 
   const dayOf = (date) => {
     return Moment(date).format('ddd');
+  }
+
+  const changeMenuItem = (index, text) => {
+    let localArr = []
+    for(let i = 0; i < menuDataLocal.length; i++) {
+      localArr[i] = menuDataLocal[i]
+      if(i === index) {
+        localArr[i].item = text
+      }
+    }
+    setMenuDataLocal(localArr)
+  }
+
+  const onSubmit = async () => {
+    console.log(menuDataLocal)
+    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/menu', {}, JSON.stringify(menuDataLocal), true)
+    setResult(resp.result)
+  }
+
+  const setNiyazValue = (val, index) => {
+    let localArr = []
+    for(let i = 0; i < menuDataLocal.length; i++) {
+      localArr[i] = menuDataLocal[i]
+      if(i === index) {
+        console.log('Setting to', index, val)
+        localArr[i].niyaz = val
+      }
+    }
+    setMenuDataLocal(localArr)
   }
 
   const dataListArr = menuDataLocal.map((menuDataInfo, index) =>
   (
     <View style={styles.data} key={index}>
       <View style={styles.date}><Text >{menuDataInfo.date}, {dayOf(menuDataInfo.date)}</Text></View>
-      <View style={styles.text}><TextInput value={menuDataInfo.item}></TextInput></View>
-      <View style={styles.check}><CheckBox disabled={false} onValueChange={setNiyaz} value={menuDataInfo.niyaz} /></View>
+      <View style={styles.text}><TextInput style={styles.input} value={menuDataInfo.item} onChangeText={(text) => changeMenuItem(index, text)}></TextInput></View>
+      <View style={styles.check}><CheckBox disabled={false} onValueChange={(val) => setNiyazValue(val, index)} value={menuDataInfo.niyaz} /></View>
 
     </View>
   ));
@@ -96,7 +123,7 @@ const PlayGround = ({ navigation }) => {
               </View>
               {dataListArr}
               <View style={{ flexDirection: 'row', borderWidth: 0, justifyContent: 'center', marginTop: 10 }}>
-                <TouchableOpacity style={styles.buttonTO}>
+                <TouchableOpacity style={styles.buttonTO} onPress={onSubmit}>
                   <Text style={{ color: 'white', width: 70, textAlign: 'center' }}>Submit</Text>
                 </TouchableOpacity>
               </View>
@@ -110,6 +137,7 @@ const PlayGround = ({ navigation }) => {
                   <Icon name="arrow-right" size={20} />
                 </TouchableOpacity>
               </View>
+              {result == '' ? (<View style={{marginTop:27}}/>) : (<Text style={{color:'green', marginTop:10}}>{result}</Text>)}
             </View>
           ) : (<View />)
         }
@@ -152,7 +180,6 @@ const styles = StyleSheet.create({
     alignItems: 'left'
   },
   text: {
-    borderWidth: 1,
     width: 200,
     marginLeft: 10,
     height: 40,
@@ -169,7 +196,15 @@ const styles = StyleSheet.create({
     flex: 4,
     alignItems: 'center',
   },
-  check: { flex: 2, alignSelf: 'center', marginLeft: 20, borderWidth: 0, alignItems: 'center' }
+  check: { flex: 2, alignSelf: 'center', marginLeft: 20, borderWidth: 0, alignItems: 'center' },
+  input: {
+    width: '100%',
+    height: '100%',
+    borderColor: 'black',
+    borderWidth: 1,
+    paddingLeft:5,
+    borderRadius:5
+  },
 });
 
 export default PlayGround;
