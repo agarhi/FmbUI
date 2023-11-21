@@ -107,7 +107,7 @@ const PlayGround = ({ navigation }) => {
           saveLabel="Save" // optional
           label="Select date" // optional
           animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
-          locale='en-US'
+          locale='en-GB'
         />
         <Button onPress={() => setVisible(true)}>
           Select date

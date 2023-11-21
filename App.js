@@ -7,6 +7,8 @@ import LandingTabs from './LandingTabs'
 import ProfileScreen from './ProfileScreen'
 import SignUpScreen from './SignUpScreen'
 import SetMenuScreen from './SetMenu'
+import { enGB, registerTranslation } from 'react-native-paper-dates'
+registerTranslation('en-GB', enGB)
 
 function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
   // If the focused route is not found, we need to assume it's the initial screen
