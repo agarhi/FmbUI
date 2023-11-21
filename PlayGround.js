@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { Button } from 'react-native-paper'
 import { DatePickerModal } from 'react-native-paper-dates'
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, CheckBox, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { useState, useEffect } from 'react';
 import Moment from 'moment';
 import integrate from './integration';
 import { Icon } from 'react-native-elements'
+import Checkbox from 'expo-checkbox';
 
 
 const PlayGround = ({ navigation }) => {
@@ -90,7 +91,7 @@ const PlayGround = ({ navigation }) => {
     <View style={styles.data} key={index}>
       <View style={styles.date}><Text >{menuDataInfo.date}, {dayOf(menuDataInfo.date)}</Text></View>
       <View style={styles.text}><TextInput style={styles.input} value={menuDataInfo.item} onChangeText={(text) => changeMenuItem(index, text)}></TextInput></View>
-      <View style={styles.check}><CheckBox disabled={false} onValueChange={(val) => setNiyazValue(val, index)} value={menuDataInfo.niyaz} /></View>
+      <View style={styles.check}><Checkbox disabled={false} onValueChange={(val) => setNiyazValue(val, index)} value={menuDataInfo.niyaz} /></View>
 
     </View>
   ));
