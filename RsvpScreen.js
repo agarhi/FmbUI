@@ -359,7 +359,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                     <Text style={isFeedbackDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenFeedbackModal(true)}
                                         disabled={isFeedbackDisabled(currMenuObj)}>Provide Feedback</Text>
                                 </View>
-                                <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={() => setOpenSpInsModal(false)} daySelected={daySelected} />
+                                <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={() => setOpenSpInsModal(false)} daySelected={daySelected} fullMenuDate={currMenuObj.date}/>
                                 <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={() => setOpenFeedbackModal(false)}
                                     daySelected={daySelected} menuItem={currMenuObj.item}
                                     beneficiary={welcomeMessage} />
