@@ -14,7 +14,7 @@ const SpInsModalScreen = ({ openSpInsModal, onClose, daySelected, fullMenuDate }
       setHeader((daySelected + '').concat(' Special Instructions'))
       if (instruction == null) {
         console.log('Fetching from integrate')
-        const resp = await integrate("GET", "http://localhost:8080/fmbApi/spInstructions/" + fullMenuDate, null, null, true)
+        const resp = await integrate("GET", "http://10.0.0.121:8080/fmbApi/spInstructions/" + fullMenuDate, null, null, true)
         instruction = resp.instructions
         dataCache[fullMenuDate] = instruction
       }
