@@ -26,7 +26,7 @@ const SpInsModalScreen = ({ openSpInsModal, onClose, daySelected, fullMenuDate }
 
   const dataArr = data.map((dataInfo, index) =>
   (
-    <Text style={{ fontSize: 20 }} key={index}>{dataInfo}</Text>
+    <Text style={{ fontSize: 20, marginBottom:10 }} key={index}>{dataInfo}</Text>
   ));
 
   useEffect(() => {
