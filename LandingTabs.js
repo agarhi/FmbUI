@@ -3,7 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Image, StyleSheet} from "react-native";
 import RsvpScreen  from './RsvpScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import PlayGround from './PlayGround'
+import SetMenuScreen from './SetMenuScreen'
+import SetSpInstructions from './SetSpInstructions';
 
 
 const LandingTabs = ({route}) => {
@@ -22,8 +23,10 @@ const Tab = createBottomTabNavigator();
             iconName = focused
               ? 'fast-food'
               : 'fast-food-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'settings-sharp' : 'settings-sharp';
+          } else if (route.name === 'Set Menu') {
+            iconName = focused ? 'restaurant' : 'restaurant-outline';
+          } else if (route.name === 'Set Sp Instructions') {
+            iconName = focused ? 'information-circle' : 'information-circle-outline';
           }
 
           // You can return any component that you like here!
@@ -33,7 +36,8 @@ const Tab = createBottomTabNavigator();
         tabBarInactiveTintColor: 'gray',
       })}>
         <Tab.Screen name="Menu" component={RsvpScreen} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}} />
-        {isAdmin ? (<Tab.Screen name="Settings" component={PlayGround} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}}/>) : (null)}
+        {isAdmin ? (<Tab.Screen name="Set Menu" component={SetMenuScreen} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}}/>) : (null)}
+        {isAdmin ? (<Tab.Screen name="Set Sp Instructions" component={SetSpInstructions} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}}/>) : (null)}
       </Tab.Navigator>
     
   );

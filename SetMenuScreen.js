@@ -9,7 +9,7 @@ import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
 
 
-const PlayGround = ({ navigation }) => {
+const SetMenuScreen = ({ navigation }) => {
   const [visible, setVisible] = React.useState(false)
   const [isDataAvailable, setDataAvailable] = React.useState(false)
   const [menuDataLocal, setMenuDataLocal] = useState([])
@@ -208,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlayGround;
+export default SetMenuScreen;

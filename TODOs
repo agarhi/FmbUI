@@ -4,3 +4,17 @@ with dates and Prev and Next (No menu). If the same condition happens on click o
 set isLoading false and show the current selected week's UI
 
 The tab menu icons and probably canva may have license 
+
+
+
+1. When there are less than 6 (say 2) days of menu set for a week, the main content area is really small
+2. For 7 days, the main content area is too long and spaced
+3. verticalTabArr is set without useState. Right now it works but not sure how
+4. Sign up in one scenario gives you ‘Modal closed’ alert at least on web
+5. ITS should be unique
+6. Implement the concept of session. You should be sending session id in request instead of userid. This is because someone could authenticate using a different user and perform POST using another user.
+7. Error handling (send some crappy value e.g. {"userId":1,"menuId":42, "offset":0,"size":item.value} and loading never stops. The error does propagate to UI but you don’t handle it there
+8. Remove readOnly from Menu object
+9. Addr2 is required
+10. Waiting for raza should be incorporated with login flow 
+* Access token expired scenario handle

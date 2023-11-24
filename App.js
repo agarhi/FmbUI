@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack'; 
+import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './LoginScreen'
 import LandingTabs from './LandingTabs'
 import ProfileScreen from './ProfileScreen'
@@ -18,8 +18,10 @@ function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
   switch (routeName) {
     case 'Menu':
       return 'Menu & Rsvp';
-    case 'Settings':
-      return 'My Settings';
+    case 'Set Menu':
+      return 'Set Menu';
+    case 'Set Sp Instructions':
+      return 'Special Instructions'
   }
 }
 
@@ -29,14 +31,14 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
-            headerStyle: { elevation: 0 },
-            cardStyle: { backgroundColor: '#ecf0f1' }
-        }}>
-        <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
+        headerStyle: { elevation: 0 },
+        cardStyle: { backgroundColor: '#ecf0f1' }
+      }}>
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="LandingTabs" options={({ route }) => ({
-            headerTitle: getHeaderTitle(route),
-            headerLeft: ()=> null
-          })} component={LandingTabs} />
+          headerTitle: getHeaderTitle(route),
+          headerLeft: () => null
+        })} component={LandingTabs} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="SetMenu" component={SetMenuScreen} />
