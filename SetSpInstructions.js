@@ -12,11 +12,12 @@ import Checkbox from 'expo-checkbox';
 const SetSpInstructions = ({ navigation }) => {
   const [visible, setVisible] = React.useState(false)
   const [isDataAvailable, setDataAvailable] = React.useState(false)
-  const [menuDataLocal, setMenuDataLocal] = useState([])
-  const [niyaz, setNiyaz] = useState(false);
+  const [spIns, setSpIns] = useState({})
+  const [instructions, setInstructions] = useState(false);
   const date = new Date()
   const [currDate, setCurrDate] = useState(date);
   const [result, setResult] = useState('')
+  const [textInputEditable, setTextInputEditable] =  useState(false)
 
   const onDismiss = React.useCallback(() => {
     setVisible(false)
@@ -41,14 +42,14 @@ const SetSpInstructions = ({ navigation }) => {
     var selected_date = Moment(date).format(dateFormat);
     let resp;
     try {
-      resp = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/menu/' + selected_date, null, null, true)
-      console.log('resp ', resp)
+      resp = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/spInstructions/' + selected_date, null, null, true)
     } catch (error) {
       // TypeError: Failed to fetch
       console.log('There was an error', error);
     }
     console.log(resp)
-    setMenuDataLocal(resp)
+    setSpIns(resp)
+    setInstructions(resp.instructions)
     setDataAvailable(true)
     setResult('')
   }
@@ -57,21 +58,13 @@ const SetSpInstructions = ({ navigation }) => {
     return Moment(date).format('ddd');
   }
 
-  const changeMenuItem = (index, text) => {
-    let localArr = []
-    for(let i = 0; i < menuDataLocal.length; i++) {
-      localArr[i] = menuDataLocal[i]
-      if(i === index) {
-        localArr[i].item = text
-      }
-    }
-    setMenuDataLocal(localArr)
-  }
-
   const onSubmit = async () => {
-    console.log(menuDataLocal)
-    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/menu', {}, JSON.stringify(menuDataLocal), true)
+    let postBody = spIns
+    postBody["instructions"] = instructions
+    console.log(postBody)
+    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/spInstructions', {}, JSON.stringify(postBody), true)
     setResult(resp.result)
+    setTextInputEditable(false)
   }
 
   const setNiyazValue = (val, index) => {
@@ -86,15 +79,9 @@ const SetSpInstructions = ({ navigation }) => {
     setMenuDataLocal(localArr)
   }
 
-  const dataListArr = menuDataLocal.map((menuDataInfo, index) =>
-  (
-    <View style={styles.data} key={index}>
-      <View style={styles.date}><Text >{menuDataInfo.date}, {dayOf(menuDataInfo.date)}</Text></View>
-      <View style={styles.text}><TextInput style={styles.input} value={menuDataInfo.item} onChangeText={(text) => changeMenuItem(index, text)}></TextInput></View>
-      <View style={styles.check}><Checkbox disabled={false} onValueChange={(val) => setNiyazValue(val, index)} value={menuDataInfo.niyaz} /></View>
-
-    </View>
-  ));
+  const enableTextBox = () => {
+    setTextInputEditable(true)
+  }
 
   return (
     <ScrollView>
@@ -119,23 +106,15 @@ const SetSpInstructions = ({ navigation }) => {
             <View style={styles.container}>
               <View style={styles.data}>
                 <View style={styles.date}><Text style={styles.header}>Date</Text></View>
-                <View style={styles.textCenter} ><Text style={styles.header}>Item</Text></View>
-                <View style={styles.check}><Text style={styles.header}>Niyaz</Text></View>
+                <View style={styles.textCenter} ><Text style={styles.header}>Instructions</Text></View>
               </View>
-              {dataListArr}
+              <View style={styles.data}>
+                <View style={styles.date}><Text >{spIns.date}, {dayOf(spIns.date)}</Text></View>
+                <View style={textInputEditable ? styles.text : styles.textDisabled}><TextInput editable={textInputEditable}  onFocus={enableTextBox} style={styles.input} value={instructions} onChangeText={(text) => setInstructions(text)}></TextInput></View>
+              </View>
               <View style={{ flexDirection: 'row', borderWidth: 0, justifyContent: 'center', marginTop: 10 }}>
                 <TouchableOpacity style={styles.buttonTO} onPress={onSubmit}>
                   <Text style={{ color: 'white', width: 70, textAlign: 'center' }}>Submit</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ flexDirection: 'row', borderWidth: 0, justifyContent: 'center', marginTop: 10 }}>
-              <TouchableOpacity style={{ flexDirection: 'row', marginRight:20 }} onPress={() => fetch(nextWeekFrom(currDate, -1))}>
-                  <Icon name="arrow-left" size={20} />
-                  <Text style={styles.nextPrev}>Prev week</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ flexDirection: 'row', marginLeft:20 }} onPress={() => fetch(nextWeekFrom(currDate, 1))}>
-                  <Text style={styles.nextPrev}>Next week</Text>
-                  <Icon name="arrow-right" size={20} />
                 </TouchableOpacity>
               </View>
               {result == '' ? (<View style={{marginTop:27}}/>) : (<Text style={{color:'green', marginTop:10}}>{result}</Text>)}
@@ -187,6 +166,15 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingTop: 5,
     flex: 4
+  },
+  textDisabled: {
+    width: 200,
+    marginLeft: 10,
+    height: 40,
+    paddingLeft: 5,
+    paddingTop: 5,
+    flex: 4,
+    opacity:0.75
   },
   textCenter: {
     borderWidth: 0,
