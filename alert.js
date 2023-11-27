@@ -4,13 +4,13 @@ import { Alert, Platform } from 'react-native'
 const alertPolyfill = (title, description, options, extra) => {
     const result = window.confirm([title, description].filter(Boolean).join('\n'))
 
-    /*if (result) { -- commented by Asif since options is undefined
+    if (result) { //-- commented by Asif since options is undefined
         const confirmOption = options.find(({ style }) => style !== 'cancel')
         confirmOption && confirmOption.onPress()
     } else {
         const cancelOption = options.find(({ style }) => style === 'cancel')
         cancelOption && cancelOption.onPress()
-    }*/
+    }
 }
 
 const alert = Platform.OS === 'web' ? alertPolyfill : Alert.alert
