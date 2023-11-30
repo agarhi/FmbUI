@@ -71,7 +71,7 @@ const RsvpScreen = ({ route, navigation }) => {
 
             if (detailsData != null) {
 
-                console.log('detailsData ', detailsData)
+                console.log('detailsData ', detailsData, ' ', new Date())
                 dataCache[currMenuPgOffset] = detailsData
                 var dateToday = new DateObject();
 

@@ -64,27 +64,20 @@ const LoginScreen = ({ navigation }) => {
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 
-                   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 
-                   'Authorization': 'Basic ' + base64.encode('fooClientId' + ':' + 'secret'), 
-                  },
-                    body: formBody
-      };
-  
-      console.log('username', username);
-      const resp = await fetch('http://10.0.0.121:8080/fmbApi/oauth/token', requestOptions);
-      const data = await resp.json();
-      const headers = resp.headers;
+      const data = await integrate('POST', 'http://10.0.0.121:8080/fmbApi/oauth/token', { 
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 
+        'Authorization': 'Basic ' + base64.encode('fooClientId' + ':' + 'secret'), 
+       }, formBody, false)
+       console.log(data)
       const access_token = data.access_token
+      let refresh_token = data.refresh_token
       console.log('access_token ', access_token)
       if (access_token == null) {
         setError(true)
         setErrorMsg(data.msg)
       } else {
-        storeData('token', access_token)
+        storeData('access_token', access_token)
+        storeData('refresh_token', refresh_token)
         setError(false)
         // another fetch call for get user
         const response = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/user/'+username, {'Authorization': 'Bearer '+access_token}, null, true)
