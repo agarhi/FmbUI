@@ -62,7 +62,8 @@ const RsvpScreen = ({ route, navigation }) => {
                 console.log('Fetched from cache')
             } else {
                 try {
-                    detailsData = await integrate(method, url, headers, body, true)  
+                    detailsData = await integrate(method, url, headers, body, true, navigation)  
+                    console.log('detailsDatadetailsData ', JSON.stringify(detailsData))
                 } catch (error) {
                     // TypeError: Failed to fetch
                     console.log('There was an error', error);

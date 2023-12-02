@@ -44,13 +44,9 @@ function App() {
       }
     }
 
-    const hasTokenExpire = (respone) => {
-      console.log('hasTokenExpire called ', JSON.stringify(respone))
+    const hasAccessTokenExpire = (respone) => {
       let expired = respone.hasOwnProperty("error_description") && respone.error_description.startsWith('Access token expired:')
-      console.log('returning  1', respone.hasOwnProperty("error_description"))
       if(respone.hasOwnProperty("error_description"))
-      console.log('returning 2', respone.error_description.startsWith('Access token expired:'))
-      console.log('returning ', expired)
       return expired
     }
   
@@ -76,10 +72,16 @@ function App() {
         },
         body: formBody
       })
+      let statusCode = resp.status
       const data = await resp.json()
-      const access_token = data.access_token
-      console.log('New access token ', access_token)
-      storeData('access_token', access_token)
+      console.log('data to get new access toekn ', data)
+      if(statusCode === 200) {
+        const access_token = data.access_token
+        console.log('New access token ', access_token)
+        storeData('access_token', access_token)
+        return true
+      }
+     return false
     }
   
     const resend = async (url, config) => {
@@ -96,10 +98,18 @@ function App() {
       console.log('Intercepted fetch')
       const response = await originalFetch(resource, config);
       const data = await response.json();
-      if (hasTokenExpire(data)) {
-        await getAndSaveNewAccessToken();
-        return await resend(resource, config)
-        console.log('Token expired')
+      if (hasAccessTokenExpire(data)) {
+        console.log('Access Token expired')
+        let successful = await getAndSaveNewAccessToken();
+        if(successful) {
+          return await resend(resource, config)
+        } else {
+          console.log('Refresh Token expired')
+          let refrTokenExpiredResp = {}
+          refrTokenExpiredResp["status"] = 999
+          refrTokenExpiredResp["reason"] = 'refreshTokenExpired'
+          return refrTokenExpiredResp
+        }
       } 
       return data;
     };
