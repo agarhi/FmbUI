@@ -42,7 +42,7 @@ const SetSpInstructions = ({ navigation }) => {
     var selected_date = Moment(date).format(dateFormat);
     let resp;
     try {
-      resp = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/spInstructions/' + selected_date, null, null, true)
+      resp = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/spInstructions/' + selected_date, null, null, true, navigation)
     } catch (error) {
       // TypeError: Failed to fetch
       console.log('There was an error', error);
@@ -62,9 +62,11 @@ const SetSpInstructions = ({ navigation }) => {
     let postBody = spIns
     postBody["instructions"] = instructions
     console.log(postBody)
-    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/spInstructions', {}, JSON.stringify(postBody), true)
-    setResult(resp.result)
-    setTextInputEditable(false)
+    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/spInstructions', {}, JSON.stringify(postBody), true, navigation)
+    if(resp) {
+      setResult(resp.result)
+      setTextInputEditable(false)
+    }
   }
 
   const setNiyazValue = (val, index) => {

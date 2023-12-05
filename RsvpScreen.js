@@ -46,94 +46,92 @@ const RsvpScreen = ({ route, navigation }) => {
     const [dataCache, setDataCache] = useState({});
 
     const fetchData = async () => { // Called on first render, when you click next or prev (fetchMode = false);;; and on rsvp change (fetchMode = true)
-        if (!noDataForTheWeek) { // Do not fetch if last attempt was unsuccessful; if you don't do this even reverting offset will call useEffect and redo the whole fetch
-            let method = isPostMode ? 'PUT': 'GET'
-            let url = isPostMode ? postModeUrl : "http://10.0.0.121:8080/fmbApi/rsvp/"  + currMenuPgOffset
-            let body = isPostMode ? postBody : null
-            let headers = {}
-            if(isPostMode) {
-                headers['Content-Type'] = 'application/json'
+        let method = isPostMode ? 'PUT' : 'GET'
+        let url = isPostMode ? postModeUrl : "http://10.0.0.121:8080/fmbApi/rsvp/" + currMenuPgOffset
+        let body = isPostMode ? postBody : null
+        let headers = {}
+        if (isPostMode) {
+            headers['Content-Type'] = 'application/json'
+        }
+        console.log('Fetch url ', url)
+        console.log('Post mode', isPostMode)
+        let detailsData
+        if (!isPostMode && dataCache[currMenuPgOffset] != null) {
+            detailsData = dataCache[currMenuPgOffset]
+            console.log('Fetched from cache')
+        } else {
+            try {
+                detailsData = await integrate(method, url, headers, body, true, navigation)
+                console.log('detailsDatadetailsData ', JSON.stringify(detailsData))
+            } catch (error) {
+                // TypeError: Failed to fetch
+                console.log('There was an error', error);
             }
-            console.log('Fetch url ', url)
-            console.log('Post mode', isPostMode)
-            let detailsData
-            if (!isPostMode && dataCache[currMenuPgOffset] != null) {
-                detailsData = dataCache[currMenuPgOffset]
-                console.log('Fetched from cache')
-            } else {
-                try {
-                    detailsData = await integrate(method, url, headers, body, true, navigation)  
-                    console.log('detailsDatadetailsData ', JSON.stringify(detailsData))
-                } catch (error) {
-                    // TypeError: Failed to fetch
-                    console.log('There was an error', error);
+        }
+
+        if (detailsData && detailsData.length > 0) {
+
+            console.log('detailsData ', detailsData, ' ', new Date())
+            dataCache[currMenuPgOffset] = detailsData
+            var dateToday = new DateObject();
+
+            var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
+            let currentDayIdx = 0;
+
+            setCurrentMonth(Moment(detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
+            let rsvpTruStr = { "rsvp": true };
+            let rsvpFalsStr = { "rsvp": false };
+            let verticalTabArr = []
+            for (let i = 0; i < detailsData.length; i++) {
+                let menuDate = detailsData[i].date;
+                if (isAfterToday(menuDate)) {
+                    if (!detailsData[i].rsvp) {
+                        rsvpAllPayloadMap.push(detailsData[i].menuRsvp.menu.id);
+                    } else {
+                        rsvpCancelAllPayloadMap.push(detailsData[i].menuRsvp.menu.id);
+                    }
+
                 }
-            }
-
-            if (detailsData != null) {
-
-                console.log('detailsData ', detailsData, ' ', new Date())
-                dataCache[currMenuPgOffset] = detailsData
-                var dateToday = new DateObject();
-
-                var dateTodayInFormat = Moment(dateToday).format('ddd, DD');
-                let currentDayIdx = 0;
-
-                setCurrentMonth(Moment(detailsData[0].date).format('MMM')) // Month to be displayed in the top left of main view
-                let rsvpTruStr = { "rsvp": true };
-                let rsvpFalsStr = { "rsvp": false };
-                let verticalTabArr = []
-                for (let i = 0; i < detailsData.length; i++) {
-                    let menuDate = detailsData[i].date;
-                    if (isAfterToday(menuDate)) {
-                        if (!detailsData[i].rsvp) {
-                            rsvpAllPayloadMap.push(detailsData[i].menuRsvp.menu.id);
-                        } else {
-                            rsvpCancelAllPayloadMap.push(detailsData[i].menuRsvp.menu.id);
-                        }
-
-                    }
-                    // Get the index of current date in the data so we can show that date white
-                    const dayDtDt = Moment(menuDate).format('ddd, DD');
-                    if (currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
-                        currentDayIdx = i;
-                    }
-
-                    // menuItemMap is a dictionary that uses dates as keys and full menu object as values
-                    menuItemMap[dayDtDt] = detailsData[i];
-                    lessRiceMap[dayDtDt] = detailsData[i].menuRsvp.lessCarbs;
-                    // start forming the vertical tab array 
-                    let topRadius = 0, bottomRadius = 0;
-                    if (i == detailsData.length - 1) {
-                        bottomRadius = 10
-                    }
-
-                    let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
-                    verticalTabArr.push(JSON.parse(initialArrCurr))
+                // Get the index of current date in the data so we can show that date white
+                const dayDtDt = Moment(menuDate).format('ddd, DD');
+                if (currMenuPgOffset == 0 && dayDtDt == dateTodayInFormat) {
+                    currentDayIdx = i;
                 }
-                console.log('menuItemMap ', menuItemMap);
-                console.log('verticalTabArr ', verticalTabArr);
-                // Just setting a bunch of state variables based on data received
-                let idx = isPostMode ? userIdxChoice : currentDayIdx
-                setUserIdxChoice(idx)
-                verticalTabArr[idx].color = 'white'; // default day 
-                setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
-                console.log('currMenuObj ', menuItemMap[verticalTabArr[idx].text])
-                console.log('foodSizeValue ', menuItemMap[verticalTabArr[idx].text].menuRsvp.size)
-                setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].menuRsvp.size)
-                setmenuItemMap(menuItemMap);
-                setButtonData(verticalTabArr)
-                setDaySelected(verticalTabArr[idx].text)
-                let weekInfo = Moment(detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment(detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length - 1].text.split(',')[1])
-                setWeekInfo(weekInfo)
-                setRsvpAllPayloadMap(rsvpAllPayloadMap)
-                setNoDataForTheWeek(false)
-                setIsLoading(false);
-            } else {
-                alert(data.msg);
-                setNoDataForTheWeek(true)
-                setCurrMenuPgOffset(reverseMenuPgOffset)
+
+                // menuItemMap is a dictionary that uses dates as keys and full menu object as values
+                menuItemMap[dayDtDt] = detailsData[i];
+                lessRiceMap[dayDtDt] = detailsData[i].menuRsvp.lessCarbs;
+                // start forming the vertical tab array 
+                let topRadius = 0, bottomRadius = 0;
+                if (i == detailsData.length - 1) {
+                    bottomRadius = 10
+                }
+
+                let initialArrCurr = '{"id":'.concat(i).concat(',"color":"#e3e3e3","text":"'.concat(dayDtDt).concat('","topRadius":'.concat(topRadius).concat(',"bottomRadius":'.concat(bottomRadius).concat('}'))))
+                verticalTabArr.push(JSON.parse(initialArrCurr))
             }
+            console.log('menuItemMap ', menuItemMap);
+            console.log('verticalTabArr ', verticalTabArr);
+            // Just setting a bunch of state variables based on data received
+            let idx = isPostMode ? userIdxChoice : currentDayIdx
+            setUserIdxChoice(idx)
+            verticalTabArr[idx].color = 'white'; // default day 
+            setCurrMenuObj(menuItemMap[verticalTabArr[idx].text])
+            console.log('currMenuObj ', menuItemMap[verticalTabArr[idx].text])
+            console.log('foodSizeValue ', menuItemMap[verticalTabArr[idx].text].menuRsvp.size)
+            setFoodSizeValue(menuItemMap[verticalTabArr[idx].text].menuRsvp.size)
+            setmenuItemMap(menuItemMap);
+            setButtonData(verticalTabArr)
+            setDaySelected(verticalTabArr[idx].text)
+            let weekInfo = Moment(detailsData[0].date).format('MMM').concat(verticalTabArr[0].text.split(',')[1].concat(' - ')).concat(Moment(detailsData[0].date).format('MMM')).concat(verticalTabArr[verticalTabArr.length - 1].text.split(',')[1])
+            setWeekInfo(weekInfo)
+            setRsvpAllPayloadMap(rsvpAllPayloadMap)
+            setNoDataForTheWeek(false)
+            setIsLoading(false);
+        } else {
+            if(!isPostMode) alert('Menu not set for next week')
+            setNoDataForTheWeek(true)
+            setCurrMenuPgOffset(reverseMenuPgOffset)
         }
     };
 
@@ -190,7 +188,7 @@ const RsvpScreen = ({ route, navigation }) => {
     ));
 
     const onRsvpPress = () => {
-        let postBody = '{"userId":'+userId+',"menuIds":['+currMenuObj.menuRsvp.menu.id+'], "offset":'+currMenuPgOffset+',"choice":'+!currMenuObj.rsvp+'}';
+        let postBody = '{"userId":' + userId + ',"menuIds":[' + currMenuObj.menuRsvp.menu.id + '], "offset":' + currMenuPgOffset + ',"choice":' + !currMenuObj.rsvp + '}';
         console.log("postBody rsvp ", postBody)
         setRsvpAllPayloadMap([])
         setRsvpCancelAllPayloadMap([])
@@ -201,8 +199,8 @@ const RsvpScreen = ({ route, navigation }) => {
     }
 
     const onRsvpAll = () => {
-        let menuIds = '['+rsvpAllPayloadMap.toString()+']'
-        let postBodyRsvpAll = '{"userId":'+userId+',"menuIds":'+menuIds+', "offset":'+currMenuPgOffset+',"choice":true}';
+        let menuIds = '[' + rsvpAllPayloadMap.toString() + ']'
+        let postBodyRsvpAll = '{"userId":' + userId + ',"menuIds":' + menuIds + ', "offset":' + currMenuPgOffset + ',"choice":true}';
         console.log('rsvp all body ', postBodyRsvpAll)
         setPostBody(postBodyRsvpAll)
         setPostMode(true)
@@ -212,8 +210,8 @@ const RsvpScreen = ({ route, navigation }) => {
     }
 
     const onRsvpCancelAll = () => {
-      let menuIds = '['+rsvpCancelAllPayloadMap.toString()+']'
-      let postBodyRsvpAll = '{"userId":'+userId+',"menuIds":'+menuIds+', "offset":'+currMenuPgOffset+',"choice":false}';
+        let menuIds = '[' + rsvpCancelAllPayloadMap.toString() + ']'
+        let postBodyRsvpAll = '{"userId":' + userId + ',"menuIds":' + menuIds + ', "offset":' + currMenuPgOffset + ',"choice":false}';
         console.log('rsvp all body ', postBodyRsvpAll)
         setPostBody(postBodyRsvpAll)
         setPostMode(true)
@@ -223,7 +221,7 @@ const RsvpScreen = ({ route, navigation }) => {
     }
 
     const onSizeChangeRsvp = (item) => {
-        let postBodySizeChange = '{"userId":'+userId+',"menuId":'+currMenuObj.menuRsvp.menu.id+', "offset":'+currMenuPgOffset+',"size":"'+item.value+'"}';
+        let postBodySizeChange = '{"userId":' + userId + ',"menuId":' + currMenuObj.menuRsvp.menu.id + ', "offset":' + currMenuPgOffset + ',"size":"' + item.value + '"}';
         console.log("pppppppppostBody size ", postBodySizeChange)
         setPostBody(postBodySizeChange)
         setPostMode(true)
@@ -232,24 +230,24 @@ const RsvpScreen = ({ route, navigation }) => {
     }
 
     const onCarbsChangeRsvp = () => {
-      let postBodyCarbsChange = '{"userId":'+userId+',"menuId":'+currMenuObj.menuRsvp.menu.id+', "offset":'+currMenuPgOffset+',"lessCarbsChoice":'+!lessRiceMap[daySelected]+'}';
-      console.log("postBody lessRice ", postBodyCarbsChange)
-      setPostBody(postBodyCarbsChange)
-      setPostMode(true)
-      setPostModeUrl("http://10.0.0.121:8080/fmbApi/rsvp/carbs")
-      setIsLoading(true)
-  }
+        let postBodyCarbsChange = '{"userId":' + userId + ',"menuId":' + currMenuObj.menuRsvp.menu.id + ', "offset":' + currMenuPgOffset + ',"lessCarbsChoice":' + !lessRiceMap[daySelected] + '}';
+        console.log("postBody lessRice ", postBodyCarbsChange)
+        setPostBody(postBodyCarbsChange)
+        setPostMode(true)
+        setPostModeUrl("http://10.0.0.121:8080/fmbApi/rsvp/carbs")
+        setIsLoading(true)
+    }
 
     const isRsvpDisabled = (currMenuObj) => {
         return currMenuObj.menuRsvp.menu.readonly || !currMenuObj.rsvp
     }
 
     const isFormInteractionEnabled = (currMenuObj) => {
-      return isRsvpAllowedForDate(currMenuObj) && currMenuObj.rsvp
+        return isRsvpAllowedForDate(currMenuObj) && currMenuObj.rsvp
     }
 
     const isRsvpAllowedForDate = (currMenuObj) => {
-      return isAfterToday(currMenuObj.date)
+        return isAfterToday(currMenuObj.date)
     }
 
     const isFeedbackDisabled = (currMenuObj) => {
@@ -286,10 +284,12 @@ const RsvpScreen = ({ route, navigation }) => {
                 <ActivityIndicator />
             ) : (
                 <ScrollView>
-                    <View style={{ flexDirection: 'column', 
-                                    width: Platform.OS === 'web' ? '40%' : '90%', 
-                                    alignSelf: 'center'}}>
-                        <View style={{ flexDirection: 'row', alignSelf: 'center', borderWidth: 0, marginTop:10, width:'100%' }}>
+                    <View style={{
+                        flexDirection: 'column',
+                        width: Platform.OS === 'web' ? '40%' : '90%',
+                        alignSelf: 'center'
+                    }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', borderWidth: 0, marginTop: 10, width: '100%' }}>
                             <View style={{ flex: 1, borderWidth: 0 }}>
                                 <TouchableOpacity style={styles.burger} onPress={openMenu}>
                                     <Icon name="menu" size={25} />
@@ -302,16 +302,18 @@ const RsvpScreen = ({ route, navigation }) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={{ width:'100%', alignSelf: 'center', justifyContent: 'center', flexDirection: 'row', borderWidth:0 }}>
+                        <View style={{ width: '100%', alignSelf: 'center', justifyContent: 'center', flexDirection: 'row', borderWidth: 0 }}>
                             <Text style={{ flex: 2, fontSize: 16, fontFamily: 'Futura', marginLeft: 15 }}>{welcomeMessage}</Text>
                             <Text style={{ flex: 1, fontSize: 14, fontFamily: 'Futura', textAlign: 'right', marginRight: 15 }}>{weekInfo}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', marginTop: 15,
-                                    borderRadius:10,
-                                    shadowColor: '#171717',
-                                    shadowOffset: {width: -2, height: 4},
-                                    shadowOpacity: 0.2,
-                                    shadowRadius: 3 }}>
+                        <View style={{
+                            flexDirection: 'row', marginTop: 15,
+                            borderRadius: 10,
+                            shadowColor: '#171717',
+                            shadowOffset: { width: -2, height: 4 },
+                            shadowOpacity: 0.2,
+                            shadowRadius: 3
+                        }}>
                             <View style={{ marginRight: -1 }}>
                                 <View style={{ width: 70, height: 60, backgroundColor: '#4c7031', padding: 15, borderTopLeftRadius: 10, justifyContent: 'center' }}>
                                     <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white', }}>{currentMonth}</Text>
@@ -360,7 +362,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                     <Text style={isFeedbackDisabled(currMenuObj) ? styles.linksDisabled : styles.links} onPress={() => setOpenFeedbackModal(true)}
                                         disabled={isFeedbackDisabled(currMenuObj)}>Provide Feedback</Text>
                                 </View>
-                                <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={() => setOpenSpInsModal(false)} daySelected={daySelected} fullMenuDate={currMenuObj.date}/>
+                                <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={() => setOpenSpInsModal(false)} daySelected={daySelected} fullMenuDate={currMenuObj.date} />
                                 <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={() => setOpenFeedbackModal(false)}
                                     daySelected={daySelected} menuItem={currMenuObj.item}
                                     beneficiary={welcomeMessage} />
@@ -381,13 +383,13 @@ const RsvpScreen = ({ route, navigation }) => {
                                 </View>
                             </View>
                         </View>
-                        <View style={{ width:'100%', borderWidth:0, alignSelf: 'center', marginTop: 30, marginLeft: 10, flexDirection: 'row', alignContent: 'center' }}>
+                        <View style={{ width: '100%', borderWidth: 0, alignSelf: 'center', marginTop: 30, marginLeft: 10, flexDirection: 'row', alignContent: 'center' }}>
                             <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpAll}>
                                 <Icon name="star-half" size={20} />
                                 <Text style={styles.buttonText}>  Rsvp for rest of the week</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ width:'100%', borderWidth:0, alignSelf: 'center', marginTop: 20, marginLeft: 10, flexDirection: 'row', alignContent: 'center' }}>
+                        <View style={{ width: '100%', borderWidth: 0, alignSelf: 'center', marginTop: 20, marginLeft: 10, flexDirection: 'row', alignContent: 'center' }}>
                             <TouchableOpacity style={styles.navBarLeftButton} onPress={onRsvpCancelAll}>
                                 <Icon name="cancel" size={20} />
                                 <Text style={styles.buttonText}>  Cancel rsvp for rest of the week</Text>
@@ -498,10 +500,10 @@ var styles = StyleSheet.create({
         right: 20
     },
     nextPrev: { borderWidth: 0, marginTop: 2, fontWeight: 'bold', color: '#2b4257' },
-    check: {flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 0 },
-    checkDisabled : {flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 0, opacity:0.5 },
-    drop : {flexDirection: 'row', flex: 1, alignItems: 'center', zIndex: 1, alignSelf: 'center'},
-    dropDisabled : {flexDirection: 'row', flex: 1, alignItems: 'center', zIndex: 1, alignSelf: 'center', opacity:0.5},
+    check: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 0 },
+    checkDisabled: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 0, opacity: 0.5 },
+    drop: { flexDirection: 'row', flex: 1, alignItems: 'center', zIndex: 1, alignSelf: 'center' },
+    dropDisabled: { flexDirection: 'row', flex: 1, alignItems: 'center', zIndex: 1, alignSelf: 'center', opacity: 0.5 },
 });
 
 export default RsvpScreen;

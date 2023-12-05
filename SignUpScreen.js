@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, CheckBox } from 'react-native'
 import { useState, useEffect } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
+import integrate from './integration';
 
 const SignUpScreen = ({ route, navigation }) => {
     const its = route.params.its
@@ -61,14 +62,13 @@ const SignUpScreen = ({ route, navigation }) => {
             requestOptions.headers['Content-Type'] = 'application/json;charset=UTF-8'
 
             const url = "http://10.0.0.121:8080/fmbApi/register"
-            let resp
+            let data
             try {
-                resp = await fetch(url, requestOptions)
+                data = await integrate('POST', url, null, JSON.stringify(jsonObj), false, null)
             } catch (error) {
                 // TypeError: Failed to fetch
                 console.log('There was an error', error);
             }
-            const data = await resp.json();
             console.log('data ', data)
             setResult(data.status == 200 ? data.successMessage : data.errorMessage)
         }

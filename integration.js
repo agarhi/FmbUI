@@ -33,6 +33,8 @@ const integrate = async (method, url, headers, body, authorizationRequired, navi
 
   if (body != null) {
     requestOptions.body = body
+    if (requestOptions.headers == null)
+      requestOptions.headers = {}
     if(requestOptions.headers['Content-Type'] == null) {
       requestOptions.headers['Content-Type'] = 'application/json'
     }
@@ -65,8 +67,9 @@ const logoutIfRequired = (nav, resp) => {
   if(nav) {
     if(hasRefreshTokenExpired(resp)) {
       console.log('About to Logout')
+      AsyncStorage.clear()
       nav.navigate('Login', {
-        message : 'Session Expired'
+        logOutMessage : 'Session Expired'
       })
       return true
     }

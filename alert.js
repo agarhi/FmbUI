@@ -4,7 +4,7 @@ import { Alert, Platform } from 'react-native'
 const alertPolyfill = (title, description, options, extra) => {
     const result = window.confirm([title, description].filter(Boolean).join('\n'))
 
-    if (result) { //-- commented by Asif since options is undefined
+    if (result) { 
         const confirmOption = options.find(({ style }) => style !== 'cancel')
         confirmOption && confirmOption.onPress()
     } else {

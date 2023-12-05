@@ -8,7 +8,7 @@ import integrate from './integration';
 
 
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ route, navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setError] = useState(false);
@@ -74,7 +74,7 @@ const LoginScreen = ({ navigation }) => {
       console.log('access_token ', access_token)
       if (access_token == null) {
         setError(true)
-        setErrorMsg(data.msg)
+        setErrorMsg('Invalid credentials')
       } else {
         storeData('access_token', access_token)
         storeData('refresh_token', refresh_token)
@@ -105,10 +105,18 @@ const LoginScreen = ({ navigation }) => {
   const handleSignUp = () => {
     navigation.navigate('SignUp')
   }
-
+  
   useEffect(() => {
     isFocused && setError(false)
   }, [isFocused]);
+
+  useEffect(() => {
+    if(route.params) {
+      setError(true)
+      setErrorMsg(route.params.logOutMessage)
+      console.log('route.params.logOutMessage ', route.params.logOutMessage)
+    }
+  });
 
   return (
     <View style={styles.container}>

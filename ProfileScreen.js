@@ -1,10 +1,13 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
 import {StackActions} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 
 const ProfileScreen = ({navigation}) => {
     const handleLogout = async () => {
         // Navigation dispatch calls a navigation action, and popToTop will take
         // the user back to the very first screen of the stack
+        AsyncStorage.clear()
         navigation.dispatch(StackActions.popToTop());
     }
 

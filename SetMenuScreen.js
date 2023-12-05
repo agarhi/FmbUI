@@ -41,16 +41,19 @@ const SetMenuScreen = ({ navigation }) => {
     var selected_date = Moment(date).format(dateFormat);
     let resp;
     try {
-      resp = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/menu/' + selected_date, null, null, true)
+      resp = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/menu/' + selected_date, null, null, true, navigation)
       console.log('resp ', resp)
     } catch (error) {
       // TypeError: Failed to fetch
       console.log('There was an error', error);
     }
     console.log(resp)
-    setMenuDataLocal(resp)
-    setDataAvailable(true)
-    setResult('')
+    if(resp) {
+      setMenuDataLocal(resp)
+      setDataAvailable(true)
+      setResult('')
+    }
+
   }
 
   const dayOf = (date) => {
@@ -70,8 +73,9 @@ const SetMenuScreen = ({ navigation }) => {
 
   const onSubmit = async () => {
     console.log(menuDataLocal)
-    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/menu', {}, JSON.stringify(menuDataLocal), true)
-    setResult(resp.result)
+    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/menu', {}, JSON.stringify(menuDataLocal), true, navigation)
+    if(resp)
+      setResult(resp.result)
   }
 
   const setNiyazValue = (val, index) => {
