@@ -364,7 +364,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                 </View>
                                 <SpInsModalScreen openSpInsModal={openSpInsModal} onClose={() => setOpenSpInsModal(false)} daySelected={daySelected} fullMenuDate={currMenuObj.date} />
                                 <FeedbackModalScreen openFeedbackModal={openFeedbackModal} onClose={() => setOpenFeedbackModal(false)}
-                                    daySelected={daySelected} menuItem={currMenuObj.item}
+                                    daySelected={daySelected} menuItem={currMenuObj.menuRsvp.menu}
                                     beneficiary={welcomeMessage} />
                                 <View style={{ flexDirection: 'row', flex: 1 }}>
                                     <View style={{ flex: 2, flexDirection: 'row', borderWidth: 0 }}>
