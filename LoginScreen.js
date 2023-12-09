@@ -19,17 +19,17 @@ const LoginScreen = ({ route, navigation }) => {
   const [its, setIts] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   var base64 = require("base-64");
- 
+
   const handleCancel = () => {
     setModalVisible(false);
   };
 
   const handleSignUpOk = async () => {
-    if(its == '') {
+    if (its == '') {
       setErrorModal(true)
       setErrorMsgModal('ITS is required')
     } else {
-      const razaResponse = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/raza/status/'+its,null, null, false)
+      const razaResponse = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/raza/status/' + its, null, null, false)
       if (razaResponse.requestDate == null) { // When there is no user found, server returns an object with no requestDate
         // This means you have to register
         navigation.navigate("SignUp", {
@@ -47,7 +47,7 @@ const LoginScreen = ({ route, navigation }) => {
   };
 
   const handleLogin = async () => {
-      if(username == '' || password == '') {
+    if (username == '' || password == '') {
       setError(true)
       setErrorMsg('Invalid credentials')
     } else {
@@ -56,19 +56,19 @@ const LoginScreen = ({ route, navigation }) => {
         'password': password,
         'grant_type': 'password'
       };
-    
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-      const data = await integrate('POST', 'http://10.0.0.121:8080/fmbApi/oauth/token', { 
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 
-        'Authorization': 'Basic ' + base64.encode('fooClientId' + ':' + 'secret'), 
-       }, formBody, false)
-       console.log(data)
+
+      var formBody = [];
+      for (var property in details) {
+        var encodedKey = encodeURIComponent(property);
+        var encodedValue = encodeURIComponent(details[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      formBody = formBody.join("&");
+      const data = await integrate('POST', 'http://10.0.0.121:8080/fmbApi/oauth/token', {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'Authorization': 'Basic ' + base64.encode('fooClientId' + ':' + 'secret'),
+      }, formBody, false)
+      console.log('--->', data)
       const access_token = data.access_token
       let refresh_token = data.refresh_token
       console.log('access_token ', access_token)
@@ -80,13 +80,19 @@ const LoginScreen = ({ route, navigation }) => {
         storeData('refresh_token', refresh_token)
         setError(false)
         // another fetch call for get user
-        const response = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/user/'+username, {'Authorization': 'Bearer '+access_token}, null, true)
-        storeData('thali_num', response.thalinum+'') // since Asynchsotrage works bette with strings
-        navigation.navigate('LandingTabs', {
-          welcomeMessage: response.fname + " " + response.lname + ', #'+response.thalinum,
-          userId: response.id,
-          isAdmin: response.credentials.role === 'ADMIN'
-        });
+        const response = await integrate('GET', 'http://10.0.0.121:8080/fmbApi/user/' + username, { 'Authorization': 'Bearer ' + access_token }, null, true)
+        if (response.hasOwnProperty("status") && response.status === 500) {
+          setError(true)
+          setErrorMsg(response.errorMessage)
+        } else {
+          storeData('thali_num', response.thalinum + '') // since Asynchsotrage works bette with strings
+          navigation.navigate('LandingTabs', {
+            welcomeMessage: response.fname + " " + response.lname + ', #' + response.thalinum,
+            userId: response.id,
+            isAdmin: response.credentials.role === 'ADMIN'
+          });
+        }
+
       }
     }
   }
@@ -105,13 +111,13 @@ const LoginScreen = ({ route, navigation }) => {
   const handleSignUp = () => {
     navigation.navigate('SignUp')
   }
-  
+
   useEffect(() => {
     isFocused && setError(false)
   }, [isFocused]);
 
   useEffect(() => {
-    if(route.params) {
+    if (route.params) {
       setError(true)
       setErrorMsg(route.params.logOutMessage)
       console.log('route.params.logOutMessage ', route.params.logOutMessage)
@@ -120,20 +126,20 @@ const LoginScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-       <View><Image style={{width: 170, height: 170}} source={require('./images/FMB.png')} /></View>
+      <View><Image style={{ width: 170, height: 170 }} source={require('./images/FMB.png')} /></View>
       <View style={styles.logincontainer}>
         <View >
-        {isError ? (
-                  <Text style={{ color: 'red', marginBottom: 20 }}>{errorMsg}</Text>
+          {isError ? (
+            <Text style={{ color: 'red', marginBottom: 20 }}>{errorMsg}</Text>
 
-        ) : (
-        <Text style={{ opacity: 0.5, marginBottom: 20 }}>Enter Credentials</Text>
-        )
-        }
+          ) : (
+            <Text style={{ opacity: 0.5, marginBottom: 20 }}>Enter Credentials</Text>
+          )
+          }
         </View>
         <View >
           <TextInput
-            onFocus={() => {setError(false)}}
+            onFocus={() => { setError(false) }}
             onChangeText={(username) => setUsername(username)}
             placeholder={'Username'}
             style={styles.input}
@@ -141,7 +147,7 @@ const LoginScreen = ({ route, navigation }) => {
         </View>
         <View >
           <TextInput
-            onFocus={() => {setError(false)}}
+            onFocus={() => { setError(false) }}
             onChangeText={(password) => setPassword(password)}
             placeholder={'Password'}
             secureTextEntry={true}
@@ -150,18 +156,17 @@ const LoginScreen = ({ route, navigation }) => {
         </View>
         <View >
           <TouchableOpacity style={styles.buttonTO} onPress={handleLogin}>
-            <Text style={{ color: 'white', textAlign: 'center', paddingRight:20, paddingLeft:20 }}>Login</Text>
+            <Text style={{ color: 'white', textAlign: 'center', paddingRight: 20, paddingLeft: 20 }}>Login</Text>
           </TouchableOpacity>
         </View>
         <View >
-          <TouchableOpacity style={styles.link} onPress={() => 
-          {
+          <TouchableOpacity style={styles.link} onPress={() => {
             setError(false)
             setModalVisible(true)
             setErrorMsgModal('')
             setErrorModal(false)
           }
-          
+
           }>
             <Text style={{ textAlign: 'center' }}>Sign Up</Text>
           </TouchableOpacity>
@@ -179,13 +184,13 @@ const LoginScreen = ({ route, navigation }) => {
             <View style={styles.modalView}>
               <Text style={styles.modalText}>Enter HOF ITS</Text>
               <TextInput
-                onFocus={() => {setErrorModal(false)}}
+                onFocus={() => { setErrorModal(false) }}
                 style={styles.inputModal}
                 placeholder=" ITS"
                 keyboardType="numeric"
                 onChangeText={(its) => setIts(its)}
               />
-              <View style={{flexDirection: 'row', borderWidth: 0, justifyContent: 'center' }}>
+              <View style={{ flexDirection: 'row', borderWidth: 0, justifyContent: 'center' }}>
                 <TouchableOpacity style={styles.buttonTO} onPress={() => setModalVisible(!modalVisible)}>
                   <Text style={{ color: 'white', width: 70, textAlign: 'center' }}>Close</Text>
                 </TouchableOpacity>
@@ -194,11 +199,11 @@ const LoginScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
               </View>
               {
-                isErrorModal ? (<Text style={{color:'red', marginTop:5}}>{errorMsgModal}</Text>) 
-                : 
-                (<View style={{marginTop:20}}/>)
+                isErrorModal ? (<Text style={{ color: 'red', marginTop: 5 }}>{errorMsgModal}</Text>)
+                  :
+                  (<View style={{ marginTop: 20 }} />)
               }
-              
+
             </View>
           </View>
         </Modal>
@@ -212,8 +217,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     borderWidth: 0,
-    justifyContent:'space-between',
-    marginTop:100,
+    justifyContent: 'space-between',
+    marginTop: 100,
   },
   logincontainer: {
     alignItems: 'center',
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     borderWidth: 0
   },
-  
+
   inputModal: {
     width: 200,
     height: 44,
@@ -283,7 +288,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   buttonTO: {
-   
+
     backgroundColor: '#4c7031',
     padding: 10,
     borderRadius: 5,
@@ -301,7 +306,7 @@ const styles = StyleSheet.create({
     height: 35,
     margin: 12,
     borderWidth: 1,
-    width:200
+    width: 200
   },
 });
 
