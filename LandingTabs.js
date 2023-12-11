@@ -5,10 +5,10 @@ import RsvpScreen  from './RsvpScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SetMenuScreen from './SetMenuScreen'
 import SetSpInstructions from './SetSpInstructions';
-
+import ApproveRazaScreen from './ApproveRazaScreen';
 
 const LandingTabs = ({route}) => {
-  const { welcomeMessage, userId, isAdmin } = route.params;
+  const { welcomeMessage, userId, isAdmin, isAamil } = route.params;
 
 const Tab = createBottomTabNavigator();
 
@@ -27,6 +27,8 @@ const Tab = createBottomTabNavigator();
             iconName = focused ? 'restaurant' : 'restaurant-outline';
           } else if (route.name === 'Set Sp Instructions') {
             iconName = focused ? 'information-circle' : 'information-circle-outline';
+          } else if (route.name === 'Approve Raza') {
+            iconName = focused ? 'checkbox' : 'checkbox-outline';
           }
 
           // You can return any component that you like here!
@@ -38,6 +40,7 @@ const Tab = createBottomTabNavigator();
         <Tab.Screen name="Menu" component={RsvpScreen} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}} />
         {isAdmin ? (<Tab.Screen name="Set Menu" component={SetMenuScreen} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}}/>) : (null)}
         {isAdmin ? (<Tab.Screen name="Set Sp Instructions" component={SetSpInstructions} options={{headerShown: false}} initialParams={{welcomeMessage:welcomeMessage, userId:userId}}/>) : (null)}
+        {isAamil ? (<Tab.Screen name="Approve Raza" component={ApproveRazaScreen} options={{headerShown: false}}/>) : (null)}
       </Tab.Navigator>
     
   );

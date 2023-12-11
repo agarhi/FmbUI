@@ -45,7 +45,6 @@ const integrate = async (method, url, headers, body, authorizationRequired, navi
   let loggedOut 
   try {
     response = await fetch(url, requestOptions) // This wii be intercepted by the code in App.js
-    console.log('Response before logoutIfRequired ', JSON.stringify(response))
     loggedOut = logoutIfRequired(navigation, response)
     console.log('after fetch ', loggedOut)
   } catch (error) {

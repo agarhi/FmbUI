@@ -20,3 +20,11 @@ The tab menu icons and probably canva may have license
 * Access token expired scenario handle
 View Instructions Disabled doesn't work in web
 Logout - remove tokens from AsyncStorage, call server to remove jSession, go to login 
+People are allowed to submit duplicate response - either check dupe or rate limiter
+Pagination in Raza approval
+Only Aamil to be able to approve raza
+
+2.0
+Reporting / Analytics
+AI
+Photos in feedback

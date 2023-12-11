@@ -24,6 +24,8 @@ function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
       return 'Set Menu';
     case 'Set Sp Instructions':
       return 'Special Instructions'
+    case 'Approve Raza':
+      return 'Approve Raza'
   }
 }
 
@@ -97,6 +99,7 @@ function App() {
       let [resource, config] = args;
       console.log('Intercepted fetch')
       const response = await originalFetch(resource, config);
+      console.log('Response status ', response.status)
       const data = await response.json();
       if (hasAccessTokenExpire(data)) {
         console.log('Access Token expired')

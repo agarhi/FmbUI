@@ -89,7 +89,8 @@ const LoginScreen = ({ route, navigation }) => {
           navigation.navigate('LandingTabs', {
             welcomeMessage: response.fname + " " + response.lname + ', #' + response.thalinum,
             userId: response.id,
-            isAdmin: response.credentials.role === 'ADMIN'
+            isAdmin: response.credentials.role === 'ADMIN',
+            isAamil: response.credentials.role === 'AAMIL'
           });
         }
 
