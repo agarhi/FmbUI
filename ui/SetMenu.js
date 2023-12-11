@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, CheckBox } from "react-native";
 import { useState, useEffect } from 'react';
 import Moment from 'moment';
-import integrate from './integration';
+import integrate from '../integration';
 
 
 const SetMenuScreen = ({ route, navigation }) => {

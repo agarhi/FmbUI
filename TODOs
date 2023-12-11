@@ -23,6 +23,7 @@ Logout - remove tokens from AsyncStorage, call server to remove jSession, go to 
 People are allowed to submit duplicate response - either check dupe or rate limiter
 Pagination in Raza approval
 Only Aamil to be able to approve raza
+How do you create Aamil and Admin not needing raza etc
 
 2.0
 Reporting / Analytics

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, CheckBox } from 'react-native'
 import { useState, useEffect } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
-import integrate from './integration';
+import integrate from '../integration';
 
 const SignUpScreen = ({ route, navigation }) => {
     const its = route.params.its

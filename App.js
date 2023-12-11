@@ -2,11 +2,11 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoginScreen from './LoginScreen'
-import LandingTabs from './LandingTabs'
-import ProfileScreen from './ProfileScreen'
-import SignUpScreen from './SignUpScreen'
-import SetMenuScreen from './SetMenu'
+import LoginScreen from './ui/LoginScreen'
+import LandingTabs from './ui/LandingTabs'
+import ProfileScreen from './ui/ProfileScreen'
+import SignUpScreen from './ui/SignUpScreen'
+import SetMenuScreen from './ui/SetMenu'
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { useState, useEffect } from 'react';

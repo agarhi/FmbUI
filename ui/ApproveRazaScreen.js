@@ -1,8 +1,8 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import integrate from './integration';
+import integrate from '../integration';
 import { useState, useEffect } from 'react';
 import Moment from 'moment';
-import alert from './alert'
+import alert from '../alert'
 
 
 const ApproveRazaScreen = ({ navigation }) => {

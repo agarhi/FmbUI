@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import DropDownPicker from 'react-native-dropdown-picker';
 import Checkbox from 'expo-checkbox';
-import integrate from './integration';
+import integrate from '../integration';
 
 
 const FeedbackModalScreen = ({ openFeedbackModal, onClose, daySelected, menuItem, beneficiary, navigation }) => {

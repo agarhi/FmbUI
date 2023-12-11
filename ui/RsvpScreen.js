@@ -8,7 +8,7 @@ import Checkbox from 'expo-checkbox';
 import SpInsModalScreen from './SpInstructionScreen'
 import FeedbackModalScreen from './FeedbackModalScreen'
 import moment from "moment";
-import integrate from './integration';
+import integrate from '../integration';
 
 
 const RsvpScreen = ({ route, navigation }) => {
@@ -295,7 +295,7 @@ const RsvpScreen = ({ route, navigation }) => {
                                     <Icon name="menu" size={25} />
                                 </TouchableOpacity>
                             </View>
-                            <View style={{ flex: 1, borderWidth: 0 }}><Image style={{ width: 170, height: 170 }} source={require('./images/FMB.png')} /></View>
+                            <View style={{ flex: 1, borderWidth: 0 }}><Image style={{ width: 170, height: 170 }} source={require('../images/FMB.png')} /></View>
                             <View style={{ flex: 1, borderWidth: 0 }}>
                                 <TouchableOpacity style={styles.person} onPress={openProfile}>
                                     <Icon name="person" size={25} />

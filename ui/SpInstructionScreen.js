@@ -1,6 +1,6 @@
 import { View, Text, Modal } from 'react-native'
 import { useState, useEffect } from 'react';
-import integrate from './integration';
+import integrate from '../integration';
 
 const SpInsModalScreen = ({ openSpInsModal, onClose, daySelected, fullMenuDate }) => {
 

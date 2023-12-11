@@ -3,8 +3,8 @@ import { Modal, View, Text, TouchableOpacity, Image, Pressable } from 'react-nat
 import { StyleSheet, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native';
-import alert from './alert'
-import integrate from './integration';
+import alert from '../alert'
+import integrate from '../integration';
 
 
 
@@ -127,7 +127,7 @@ const LoginScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View><Image style={{ width: 170, height: 170 }} source={require('./images/FMB.png')} /></View>
+      <View><Image style={{ width: 170, height: 170 }} source={require('../images/FMB.png')} /></View>
       <View style={styles.logincontainer}>
         <View >
           {isError ? (
