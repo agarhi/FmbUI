@@ -114,7 +114,12 @@ const FeedbackModalScreen = ({ openFeedbackModal, onClose, daySelected, menuItem
 
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', alignContent: 'center', marginTop: 30 }}>
-          <TouchableOpacity style={styles.button} onPress={onSubmit}>
+          <TouchableOpacity style={styles.button} onPress={() =>  {
+            setResult('')
+            setIsResult(false)
+            setAnonymous(false)
+            onClose()
+            }}>
             <Text style={{ color: 'white' }}>Close</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, { marginLeft: 10 }]} onPress={onSubmit}>

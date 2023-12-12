@@ -24,6 +24,7 @@ People are allowed to submit duplicate response - either check dupe or rate limi
 Pagination in Raza approval
 Only Aamil to be able to approve raza
 How do you create Aamil and Admin not needing raza etc
+Test roles propperly, An aamil should be able to do Aamil + Admin + User stuff and so on
 
 2.0
 Reporting / Analytics
