@@ -7,9 +7,10 @@ import Moment from 'moment';
 import integrate from '../integration';
 import { Icon } from 'react-native-elements'
 import Checkbox from 'expo-checkbox';
+import alert from '../alert';
 
 
-const SetMenuScreen = ({ navigation }) => {
+const ViewFeedbackLandingScreen = ({ navigation }) => {
   const [visible, setVisible] = React.useState(false)
   const [isDataAvailable, setDataAvailable] = React.useState(false)
   const [menuDataLocal, setMenuDataLocal] = useState([])
@@ -60,22 +61,19 @@ const SetMenuScreen = ({ navigation }) => {
     return Moment(date).format('ddd');
   }
 
-  const changeMenuItem = (index, text) => {
-    let localArr = []
-    for(let i = 0; i < menuDataLocal.length; i++) {
-      localArr[i] = menuDataLocal[i]
-      if(i === index) {
-        localArr[i].item = text
-      }
-    }
-    setMenuDataLocal(localArr)
-  }
-
   const onSubmit = async () => {
-    console.log(menuDataLocal)
-    const resp = await integrate('PUT', 'http://10.0.0.121:8080/fmbApi/menu', {}, JSON.stringify(menuDataLocal), true, navigation)
-    if(resp)
-      setResult(resp.result)
+    console.log(menuDataLocal.length)
+    let qryString = ""
+    for(let i = 0; i < menuDataLocal.length; i++) {
+        if(menuDataLocal[i].niyaz) {
+            qryString += "menuIds="+menuDataLocal[i].id+"&"
+        }
+    }
+    qryString = qryString.substring(0,qryString.length-1)
+    console.log('qryString is ', qryString)
+    navigation.navigate('ViewFeedbackScreen', {
+        qryString: qryString
+    })
   }
 
   const setNiyazValue = (val, index) => {
@@ -94,7 +92,7 @@ const SetMenuScreen = ({ navigation }) => {
   (
     <View style={styles.data} key={index}>
       <View style={styles.date}><Text >{menuDataInfo.date}, {dayOf(menuDataInfo.date)}</Text></View>
-      <View style={styles.text}><TextInput style={styles.input} value={menuDataInfo.item} onChangeText={(text) => changeMenuItem(index, text)}></TextInput></View>
+      <View style={styles.text}><Text >{menuDataInfo.item}</Text></View>
       <View style={styles.check}><Checkbox disabled={false} onValueChange={(val) => setNiyazValue(val, index)} value={menuDataInfo.niyaz} /></View>
 
     </View>
@@ -129,7 +127,7 @@ const SetMenuScreen = ({ navigation }) => {
               {dataListArr}
               <View style={{ flexDirection: 'row', borderWidth: 0, justifyContent: 'center', marginTop: 10 }}>
                 <TouchableOpacity style={styles.buttonTO} onPress={onSubmit}>
-                  <Text style={{ color: 'white', width: 70, textAlign: 'center' }}>Submit</Text>
+                  <Text style={{ color: 'white', width: 100, textAlign: 'center' }}>See Feedback</Text>
                 </TouchableOpacity>
               </View>
               <View style={{ flexDirection: 'row', borderWidth: 0, justifyContent: 'center', marginTop: 10 }}>
@@ -161,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     marginBottom: 30,
-    margin:10
+   margin:10
   },
   data: {
     flexDirection: 'row',
@@ -185,23 +183,21 @@ const styles = StyleSheet.create({
     alignItems: 'left'
   },
   text: {
-    width: 200,
     marginLeft: 10,
     height: 40,
     paddingLeft: 5,
     paddingTop: 5,
-    flex: 4
+    flex: 2
   },
   textCenter: {
     borderWidth: 0,
-    width: 200,
     marginLeft: 10,
     height: 20,
     paddingLeft: 5,
-    flex: 4,
-    alignItems: 'center',
+    flex: 2,
+    alignItems: 'left',
   },
-  check: { flex: 2, alignSelf: 'center', marginLeft: 20, borderWidth: 0, alignItems: 'center' },
+  check: { flex: 1, alignSelf: 'center', marginLeft: 20, borderWidth: 0, alignItems: 'center' },
   input: {
     width: '100%',
     height: '100%',
@@ -212,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SetMenuScreen;
+export default ViewFeedbackLandingScreen;

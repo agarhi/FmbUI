@@ -129,7 +129,7 @@ const RsvpScreen = ({ route, navigation }) => {
             setNoDataForTheWeek(false)
             setIsLoading(false);
         } else {
-            if(!isPostMode) alert('Menu not set for next week')
+            //if(!isPostMode) alert('Menu not set for next week')
             setNoDataForTheWeek(true)
             setCurrMenuPgOffset(reverseMenuPgOffset)
         }
@@ -243,19 +243,23 @@ const RsvpScreen = ({ route, navigation }) => {
     }
 
     const isFormInteractionEnabled = (currMenuObj) => {
-        return isRsvpAllowedForDate(currMenuObj) && currMenuObj.rsvp
+        return isMenuSetForTheDay(currMenuObj) && isRsvpAllowedForDate(currMenuObj) && currMenuObj.rsvp
+    }
+
+    const isMenuSetForTheDay = (currMenuObj) => {
+        return currMenuObj.allowedToRsvp 
     }
 
     const isRsvpAllowedForDate = (currMenuObj) => {
-        return isAfterToday(currMenuObj.date)
+        return isAfterToday(currMenuObj.date) && isMenuSetForTheDay(currMenuObj)
     }
 
     const isFeedbackDisabled = (currMenuObj) => {
-        return isAfterToday((menuItemMap[daySelected]).date)
+        return isAfterToday((menuItemMap[daySelected]).date) || !isMenuSetForTheDay(currMenuObj)
     }
 
     const isInstructionsDisabled = (currMenuObj) => {
-        return isBeforeToday((menuItemMap[daySelected]).date)
+        return isBeforeToday((menuItemMap[daySelected]).date) || !isMenuSetForTheDay(currMenuObj)
     }
 
     const isAfterToday = (selectedDate) => {

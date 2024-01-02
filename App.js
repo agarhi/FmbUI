@@ -6,11 +6,12 @@ import LoginScreen from './ui/LoginScreen'
 import LandingTabs from './ui/LandingTabs'
 import ProfileScreen from './ui/ProfileScreen'
 import SignUpScreen from './ui/SignUpScreen'
-import SetMenuScreen from './ui/SetMenu'
+import SetMenuScreen from './ui/SetMenuScreen'
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import ViewFeedbackScreen from './ui/ViewFeedbackScreen';
 
 function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
   // If the focused route is not found, we need to assume it's the initial screen
@@ -26,13 +27,15 @@ function getHeaderTitle(route) { // https://snack.expo.dev/?platform=web
       return 'Special Instructions'
     case 'Approve Raza':
       return 'Approve Raza'
+    case 'View Feedback':
+      return 'View Feedback'
   }
 }
 
 
 const Stack = createStackNavigator();
 function App() {
-  
+
   var base64 = require("base-64");
   useEffect(() => { // All the code below is to mock responses so we can identify token expire scenario and handle it: https://dev.to/snigdho611/react-js-interceptors-with-fetch-api-1oei
     const storeData = async (key, value) => {
@@ -48,17 +51,17 @@ function App() {
 
     const hasAccessTokenExpire = (respone) => {
       let expired = respone.hasOwnProperty("error_description") && respone.error_description.startsWith('Access token expired:')
-      if(respone.hasOwnProperty("error_description"))
-      return expired
+      if (respone.hasOwnProperty("error_description"))
+        return expired
     }
-  
+
     const getAndSaveNewAccessToken = async () => {
       console.log('Getting new token')
       var details = {
         'grant_type': 'refresh_token',
         'refresh_token': await AsyncStorage.getItem('refresh_token')
       };
-  
+
       var formBody = [];
       for (var property in details) {
         var encodedKey = encodeURIComponent(property);
@@ -67,7 +70,7 @@ function App() {
       }
       formBody = formBody.join("&");
       const resp = await originalFetch('http://10.0.0.121:8080/fmbApi/oauth/token', {
-        method: 'POST', 
+        method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
           'Authorization': 'Basic ' + base64.encode('fooClientId' + ':' + 'secret'),
@@ -77,15 +80,15 @@ function App() {
       let statusCode = resp.status
       const data = await resp.json()
       console.log('data to get new access toekn ', data)
-      if(statusCode === 200) {
+      if (statusCode === 200) {
         const access_token = data.access_token
         console.log('New access token ', access_token)
         storeData('access_token', access_token)
         return true
       }
-     return false
+      return false
     }
-  
+
     const resend = async (url, config) => {
       // Add the new token
       config.headers['Authorization'] = 'Bearer ' + await AsyncStorage.getItem('access_token')
@@ -97,14 +100,11 @@ function App() {
     const { fetch: originalFetch } = window;
     window.fetch = async (...args) => {
       let [resource, config] = args;
-      console.log('Intercepted fetch')
       const response = await originalFetch(resource, config);
-      console.log('Response status ', response.status)
       const data = await response.json();
       if (hasAccessTokenExpire(data)) {
-        console.log('Access Token expired')
         let successful = await getAndSaveNewAccessToken();
-        if(successful) {
+        if (successful) {
           return await resend(resource, config)
         } else {
           console.log('Refresh Token expired')
@@ -113,12 +113,12 @@ function App() {
           refrTokenExpiredResp["reason"] = 'refreshTokenExpired'
           return refrTokenExpiredResp
         }
-      } 
+      }
       return data;
     };
   }, []);
 
-  
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
@@ -133,6 +133,7 @@ function App() {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="SetMenu" component={SetMenuScreen} />
+        <Stack.Screen name="ViewFeedbackScreen" component={ViewFeedbackScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -126,8 +126,8 @@ const LoginScreen = ({ route, navigation }) => {
   });
 
   return (
-    <View style={styles.container}>
-      <View><Image style={{ width: 170, height: 170 }} source={require('../images/FMB.png')} /></View>
+    <View style={styles.container}><View>
+      <View style={{alignSelf:'center'}}><Image style={{ width: 170, height: 170 }} source={require('../images/FMB.png')} /></View>
       <View style={styles.logincontainer}>
         <View >
           {isError ? (
@@ -208,18 +208,16 @@ const LoginScreen = ({ route, navigation }) => {
             </View>
           </View>
         </Modal>
-      </View>
+      </View></View>
     </View>
 
   );
 }
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderWidth: 0,
-    justifyContent: 'space-between',
-    marginTop: 100,
+    flex:1,
+    justifyContent: 'center',
+    borderWidth: 1
   },
   logincontainer: {
     alignItems: 'center',
